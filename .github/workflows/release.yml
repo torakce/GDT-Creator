@@ -1,0 +1,67 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore GdtCreator.sln --configfile NuGet.Config
+
+      - name: Build
+        run: dotnet build GdtCreator.Wpf/GdtCreator.Wpf.csproj -c Release --no-restore
+
+      - name: Run tests
+        run: dotnet run --project GdtCreator.Tests/GdtCreator.Tests.csproj -c Release --no-build --no-restore
+
+      - name: Publish portable build
+        run: >-
+          dotnet publish GdtCreator.Wpf/GdtCreator.Wpf.csproj
+          -c Release
+          -r win-x64
+          --self-contained true
+          /p:PublishSingleFile=false
+          /p:PublishReadyToRun=true
+          /p:PublishTrimmed=false
+          --output artifacts/publish/win-x64
+
+      - name: Package release
+        id: package
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $releaseDir = "artifacts/releases"
+          $zipPath = Join-Path $releaseDir ("GDT-Creator-" + $tag + "-win-x64.zip")
+
+          New-Item -ItemType Directory -Force -Path $releaseDir | Out-Null
+          if (Test-Path $zipPath) {
+            Remove-Item $zipPath -Force
+          }
+
+          Compress-Archive -Path "artifacts/publish/win-x64/*" -DestinationPath $zipPath -CompressionLevel Optimal
+          "zip_path=$zipPath" >> $env:GITHUB_OUTPUT
+
+      - name: Create GitHub release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $asset = "${{ steps.package.outputs.zip_path }}"
+          gh release create $tag $asset --title "GDT Creator $tag" --generate-notes
