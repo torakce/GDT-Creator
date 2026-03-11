@@ -24,44 +24,63 @@ jobs:
       - name: Restore
         run: dotnet restore GdtCreator.sln --configfile NuGet.Config
 
-      - name: Build
-        run: dotnet build GdtCreator.Wpf/GdtCreator.Wpf.csproj -c Release --no-restore
-
       - name: Run tests
-        run: dotnet run --project GdtCreator.Tests/GdtCreator.Tests.csproj -c Release --no-build --no-restore
+        run: dotnet run --project GdtCreator.Tests/GdtCreator.Tests.csproj -c Release --no-restore
 
-      - name: Publish portable build
-        run: >-
-          dotnet publish GdtCreator.Wpf/GdtCreator.Wpf.csproj
-          -c Release
-          -r win-x64
-          --self-contained true
-          /p:PublishSingleFile=false
-          /p:PublishReadyToRun=true
-          /p:PublishTrimmed=false
-          --output artifacts/publish/win-x64
+      - name: Publish portable single-file build
+        shell: pwsh
+        run: |
+          dotnet publish GdtCreator.Wpf/GdtCreator.Wpf.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            /p:PublishSingleFile=true `
+            /p:IncludeNativeLibrariesForSelfExtract=true `
+            /p:EnableCompressionInSingleFile=true `
+            /p:PublishTrimmed=false `
+            /p:DebugType=None `
+            /p:DebugSymbols=false `
+            --output artifacts/publish/win-x64
 
-      - name: Package release
-        id: package
+      - name: Prepare release assets
+        id: assets
         shell: pwsh
         run: |
           $tag = "${{ github.ref_name }}"
-          $releaseDir = "artifacts/releases"
+          $releaseDir = "artifacts/release"
+          $portableExe = Join-Path $releaseDir "GDT-Creator.exe"
+          $readmePath = Join-Path $releaseDir "README.txt"
           $zipPath = Join-Path $releaseDir ("GDT-Creator-" + $tag + "-win-x64.zip")
 
+          if (Test-Path $releaseDir) {
+            Remove-Item $releaseDir -Recurse -Force
+          }
           New-Item -ItemType Directory -Force -Path $releaseDir | Out-Null
-          if (Test-Path $zipPath) {
-            Remove-Item $zipPath -Force
+
+          $publishedExe = Get-ChildItem "artifacts/publish/win-x64" -Filter "*.exe" | Select-Object -First 1 -ExpandProperty FullName
+          if (-not $publishedExe) {
+            throw "Published executable not found."
           }
 
-          Compress-Archive -Path "artifacts/publish/win-x64/*" -DestinationPath $zipPath -CompressionLevel Optimal
+          Copy-Item $publishedExe $portableExe -Force
+          Set-Content -Path $readmePath -Value "Run GDT-Creator.exe. No installer required."
+          Compress-Archive -Path $portableExe, $readmePath -DestinationPath $zipPath -CompressionLevel Optimal
+
+          "exe_path=$portableExe" >> $env:GITHUB_OUTPUT
           "zip_path=$zipPath" >> $env:GITHUB_OUTPUT
 
-      - name: Create GitHub release
+      - name: Publish GitHub release assets
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           $tag = "${{ github.ref_name }}"
-          $asset = "${{ steps.package.outputs.zip_path }}"
-          gh release create $tag $asset --title "GDT Creator $tag" --generate-notes
+          $exe = "${{ steps.assets.outputs.exe_path }}"
+          $zip = "${{ steps.assets.outputs.zip_path }}"
+
+          if (gh release view $tag *> $null) {
+            gh release upload $tag $exe $zip --clobber
+          }
+          else {
+            gh release create $tag $exe $zip --title "GDT Creator $tag" --generate-notes
+          }
