@@ -21,8 +21,15 @@ jobs:
         with:
           global-json-file: global.json
 
-      - name: Restore
+      - name: Restore solution
         run: dotnet restore GdtCreator.sln --configfile NuGet.Config
+
+      - name: Restore win-x64 publish dependencies
+        run: >-
+          dotnet restore GdtCreator.Wpf/GdtCreator.Wpf.csproj
+          -r win-x64
+          --self-contained true
+          --configfile NuGet.Config
 
       - name: Run tests
         run: dotnet run --project GdtCreator.Tests/GdtCreator.Tests.csproj -c Release --no-restore
@@ -40,6 +47,7 @@ jobs:
             /p:PublishTrimmed=false `
             /p:DebugType=None `
             /p:DebugSymbols=false `
+            --no-restore `
             --output artifacts/publish/win-x64
 
       - name: Prepare release assets
