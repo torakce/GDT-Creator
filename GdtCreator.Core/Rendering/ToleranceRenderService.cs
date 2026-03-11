@@ -100,25 +100,32 @@ public sealed class ToleranceRenderService : IRenderService
 
     private static string NormalizeToleranceValue(string toleranceValue)
     {
-        if (decimal.TryParse(
-                toleranceValue,
-                NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign,
-                CultureInfo.InvariantCulture,
-                out var invariantValue))
+        return TryParseToleranceValue(toleranceValue, out var value)
+            ? value.ToString("0.###", CultureInfo.InvariantCulture)
+            : toleranceValue.Trim();
+    }
+
+    private static bool TryParseToleranceValue(string toleranceValue, out decimal value)
+    {
+        var trimmed = toleranceValue.Trim();
+        var styles = NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign;
+
+        if (decimal.TryParse(trimmed, styles, CultureInfo.InvariantCulture, out value))
         {
-            return invariantValue.ToString("0.###", CultureInfo.InvariantCulture);
+            return true;
         }
 
-        if (decimal.TryParse(
-                toleranceValue,
-                NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign,
-                CultureInfo.CurrentCulture,
-                out var currentValue))
+        if (decimal.TryParse(trimmed, styles, CultureInfo.CurrentCulture, out value))
         {
-            return currentValue.ToString("0.###", CultureInfo.InvariantCulture);
+            return true;
         }
 
-        return toleranceValue.Trim();
+        if (decimal.TryParse(trimmed, styles, CultureInfo.GetCultureInfo("fr-FR"), out value))
+        {
+            return true;
+        }
+
+        return decimal.TryParse(trimmed.Replace(',', '.'), styles, CultureInfo.InvariantCulture, out value);
     }
 
     private static ToleranceCell CreateCell(IReadOnlyList<RenderToken> tokens, bool preferSquare = false)
@@ -152,3 +159,4 @@ public sealed class ToleranceRenderService : IRenderService
         };
     }
 }
+
