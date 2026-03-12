@@ -16,6 +16,8 @@ internal static class Program
         Run("Validation requires datum for position", TestValidationRequiresDatumForPosition, failures);
         Run("Render model builds expected cells", TestRenderModelCellCount, failures);
         Run("Render model normalizes tolerance text", TestRenderModelNormalizesValue, failures);
+        Run("Render model includes top and bottom text", TestRenderModelIncludesContextText, failures);
+        Run("Render model carries content color", TestRenderModelCarriesContentColor, failures);
         Run("Settings serialize cleanly", TestSettingsSerialization, failures);
 
         if (failures.Count == 0)
@@ -92,6 +94,37 @@ internal static class Program
         AssertEqual("0.25", toleranceCellText, "Tolerance text should normalize to invariant format.");
     }
 
+    private static void TestRenderModelIncludesContextText()
+    {
+        var renderer = new ToleranceRenderService();
+        var model = renderer.Render(new GeometricToleranceSpec
+        {
+            Characteristic = GeometricCharacteristic.Position,
+            ToleranceValue = "0.1",
+            TopText = "TOP NOTE",
+            BottomText = "BOTTOM NOTE",
+            DatumReferences = [new DatumReference { Label = "A" }]
+        });
+
+        AssertEqual("TOP NOTE", model.TopText!, "Top text should be carried into the render model.");
+        AssertEqual("BOTTOM NOTE", model.BottomText!, "Bottom text should be carried into the render model.");
+        AssertTrue(model.Height > model.FrameHeight, "Render height should expand when context text is present.");
+    }
+
+    private static void TestRenderModelCarriesContentColor()
+    {
+        var renderer = new ToleranceRenderService();
+        var model = renderer.Render(new GeometricToleranceSpec
+        {
+            Characteristic = GeometricCharacteristic.Position,
+            ToleranceValue = "0.1",
+            ContentColorHex = "#b42318",
+            DatumReferences = [new DatumReference { Label = "A" }]
+        });
+
+        AssertEqual("#B42318", model.ContentColorHex, "Content color should normalize to uppercase hex.");
+    }
+
     private static void TestSettingsSerialization()
     {
         var settings = new AppSettings
@@ -100,7 +133,8 @@ internal static class Program
             LastSpec = new GeometricToleranceSpec
             {
                 Characteristic = GeometricCharacteristic.Perpendicularity,
-                ToleranceValue = "0.05"
+                ToleranceValue = "0.05",
+                ContentColorHex = "#0F766E"
             }
         };
 
@@ -110,6 +144,7 @@ internal static class Program
         AssertTrue(roundTrip is not null, "Settings deserialization returned null.");
         AssertEqual(4d, roundTrip!.ExportScale, "Export scale should round-trip.");
         AssertEqual(GeometricCharacteristic.Perpendicularity, roundTrip.LastSpec.Characteristic, "Characteristic should round-trip.");
+        AssertEqual("#0F766E", roundTrip.LastSpec.ContentColorHex, "Content color should round-trip.");
     }
 
     private static void Run(string name, Action test, List<string> failures)

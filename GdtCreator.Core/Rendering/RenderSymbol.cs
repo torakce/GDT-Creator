@@ -22,9 +22,5 @@ public enum RenderSymbol
     ProjectedToleranceZone,
     FreeState,
     SphericalDiameter,
-    SphericalRadius,
-    DatumFeatureDirect,
-    DatumFeatureLeaderLeft,
-    DatumFeatureLeaderRight,
-    DatumFeatureLeaderDown
+    SphericalRadius
 }

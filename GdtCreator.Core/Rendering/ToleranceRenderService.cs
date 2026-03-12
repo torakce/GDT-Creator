@@ -6,13 +6,19 @@ namespace GdtCreator.Core.Rendering;
 
 public sealed class ToleranceRenderService : IRenderService
 {
+    private const double FrameHeight = 46d;
+    private const double BasePadding = 12d;
+    private const double TextLineHeight = 18d;
+    private const double TextGap = 6d;
+    private const string DefaultContentColorHex = "#102A43";
+
     public ToleranceRenderModel Render(GeometricToleranceSpec spec)
     {
         ArgumentNullException.ThrowIfNull(spec);
 
         var cells = new List<ToleranceCell>
         {
-            CreateCell([RenderToken.ForSymbol(ToCharacteristicSymbol(spec.Characteristic))], preferSquare: true),
+            CreateCell([RenderToken.ForSymbol(ToCharacteristicSymbol(spec.Characteristic))]),
             CreateCell(CreateToleranceTokens(spec))
         };
 
@@ -28,17 +34,79 @@ public sealed class ToleranceRenderService : IRenderService
                 datumTokens.Add(RenderToken.ForSymbol(RenderSymbol.LeastMaterialCondition));
             }
 
-            cells.Add(CreateCell(datumTokens, preferSquare: datumTokens.Count == 1));
+            cells.Add(CreateCell(datumTokens));
         }
+
+        var topText = NormalizeFreeText(spec.TopText);
+        var bottomText = NormalizeFreeText(spec.BottomText);
+        var contentColorHex = NormalizeColorHex(spec.ContentColorHex);
+        var frameWidth = cells.Sum(cell => cell.Width);
+        var measuredTextWidth = Math.Max(EstimateFreeTextWidth(topText), EstimateFreeTextWidth(bottomText));
+        var totalWidth = Math.Max(frameWidth, measuredTextWidth);
+        var topTextHeight = topText is null ? 0d : TextLineHeight;
+        var bottomTextHeight = bottomText is null ? 0d : TextLineHeight;
+        var totalHeight = FrameHeight
+            + topTextHeight
+            + bottomTextHeight
+            + (topTextHeight > 0d ? TextGap : 0d)
+            + (bottomTextHeight > 0d ? TextGap : 0d);
 
         return new ToleranceRenderModel
         {
             Cells = cells,
-            Height = RenderMetrics.CellHeight,
-            Width = cells.Sum(cell => cell.Width),
-            Padding = RenderMetrics.HorizontalPadding,
-            StrokeThickness = RenderMetrics.StrokeThickness
+            Width = totalWidth,
+            Height = totalHeight,
+            FrameWidth = frameWidth,
+            FrameHeight = FrameHeight,
+            ContentColorHex = contentColorHex,
+            TopText = topText,
+            BottomText = bottomText,
+            TopTextHeight = topTextHeight,
+            BottomTextHeight = bottomTextHeight,
+            TextGap = TextGap
         };
+    }
+
+    private static string? NormalizeFreeText(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+    }
+
+    private static string NormalizeColorHex(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return DefaultContentColorHex;
+        }
+
+        var trimmed = value.Trim();
+        if (trimmed.StartsWith('#'))
+        {
+            trimmed = trimmed[1..];
+        }
+
+        if (trimmed.Length == 3 && trimmed.All(IsHexDigit))
+        {
+            trimmed = string.Concat(trimmed.Select(ch => new string(ch, 2)));
+        }
+
+        return trimmed.Length == 6 && trimmed.All(IsHexDigit)
+            ? $"#{trimmed.ToUpperInvariant()}"
+            : DefaultContentColorHex;
+    }
+
+    private static bool IsHexDigit(char character)
+    {
+        return character is >= '0' and <= '9'
+            or >= 'A' and <= 'F'
+            or >= 'a' and <= 'f';
+    }
+
+    private static double EstimateFreeTextWidth(string? text)
+    {
+        return string.IsNullOrWhiteSpace(text)
+            ? 0d
+            : Math.Max(60d, text.Trim().Length * 9d);
     }
 
     private static bool HasDatumReference(DatumReference datumReference)
@@ -128,13 +196,27 @@ public sealed class ToleranceRenderService : IRenderService
         return decimal.TryParse(trimmed.Replace(',', '.'), styles, CultureInfo.InvariantCulture, out value);
     }
 
-    private static ToleranceCell CreateCell(IReadOnlyList<RenderToken> tokens, bool preferSquare = false)
+    private static ToleranceCell CreateCell(IReadOnlyList<RenderToken> tokens)
     {
         return new ToleranceCell
         {
             Tokens = tokens,
-            Width = RenderMetrics.MeasureCellWidth(tokens, preferSquare)
+            Width = EstimateCellWidth(tokens)
         };
+    }
+
+    private static double EstimateCellWidth(IEnumerable<RenderToken> tokens)
+    {
+        var width = BasePadding * 2d;
+
+        foreach (var token in tokens)
+        {
+            width += token.IsSymbol
+                ? 38d
+                : Math.Max(18d, token.Text!.Length * 10d);
+        }
+
+        return Math.Max(68d, width);
     }
 
     private static RenderSymbol ToCharacteristicSymbol(GeometricCharacteristic characteristic)
@@ -159,4 +241,3 @@ public sealed class ToleranceRenderService : IRenderService
         };
     }
 }
-

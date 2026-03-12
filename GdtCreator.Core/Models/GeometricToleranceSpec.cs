@@ -20,6 +20,12 @@ public sealed class GeometricToleranceSpec
 
     public string? UnequallyDisposedValue { get; set; }
 
+    public string? TopText { get; set; }
+
+    public string? BottomText { get; set; }
+
+    public string ContentColorHex { get; set; } = "#102A43";
+
     public List<DatumReference> DatumReferences { get; set; } =
     [
         new DatumReference { Label = "A" },

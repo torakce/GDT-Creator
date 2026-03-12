@@ -15,12 +15,14 @@
         FontFamily="Bahnschrift"
         PreviewMouseWheel="OnWindowPreviewMouseWheel">
     <Window.Resources>
+        <!-- Grouped view for characteristic picker -->
         <CollectionViewSource x:Key="GroupedCharacteristics" Source="{Binding Characteristics}">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="Category" />
             </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
 
+        <!-- ── ListBox base style (no chrome) ── -->
         <Style x:Key="PickerListBoxStyle" TargetType="ListBox">
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Background" Value="Transparent" />
@@ -29,6 +31,7 @@
             <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
         </Style>
 
+        <!-- ── Item container styles ── -->
         <Style x:Key="CharacteristicItemStyle" TargetType="ListBoxItem">
             <Setter Property="Padding" Value="0" />
             <Setter Property="Margin" Value="0,0,8,8" />
@@ -68,11 +71,32 @@
             </Setter>
         </Style>
 
+        <!-- ── Characteristic card template ── -->
         <DataTemplate x:Key="CharacteristicItemTemplate">
-            <Border x:Name="Card" MinWidth="82" Padding="8,8,8,6" Background="#F6FAFD" BorderBrush="#D4E0EA" BorderThickness="1" CornerRadius="14" Cursor="Hand" ToolTip="{Binding Label}">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <controls:SymbolSwatchControl Width="38" Height="38" HorizontalAlignment="Center" StrokeThickness="2.1" Symbol="{Binding Symbol}" />
-                    <TextBlock Margin="0,5,0,0" HorizontalAlignment="Center" TextAlignment="Center" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource HeadlineBrush}" Text="{Binding DisplayLabel}" TextWrapping="Wrap" />
+            <Border x:Name="Card"
+                    MinWidth="82"
+                    Padding="8,8,8,6"
+                    Background="#F6FAFD"
+                    BorderBrush="#D4E0EA"
+                    BorderThickness="1"
+                    CornerRadius="14"
+                    Cursor="Hand"
+                    ToolTip="{Binding Label}">
+                <StackPanel VerticalAlignment="Center"
+                            HorizontalAlignment="Center">
+                    <controls:SymbolSwatchControl Width="38"
+                                                  Height="38"
+                                                  HorizontalAlignment="Center"
+                                                  StrokeThickness="2.2"
+                                                  Symbol="{Binding Symbol}" />
+                    <TextBlock Margin="0,5,0,0"
+                               HorizontalAlignment="Center"
+                               TextAlignment="Center"
+                               FontSize="11"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource HeadlineBrush}"
+                               Text="{Binding DisplayLabel}"
+                               TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
             <DataTemplate.Triggers>
@@ -84,11 +108,31 @@
             </DataTemplate.Triggers>
         </DataTemplate>
 
+        <!-- ── Chip template (zone modifier, material condition) ── -->
         <DataTemplate x:Key="ChipItemTemplate">
-            <Border x:Name="Chip" MinWidth="60" Padding="12,7" Background="#F8FBFD" BorderBrush="#D4E0EA" BorderThickness="1" CornerRadius="10" Cursor="Hand" ToolTip="{Binding Label}">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <controls:SymbolSwatchControl x:Name="ChipSymbol" Width="20" Height="20" Margin="0,0,5,0" StrokeThickness="1.8" Symbol="{Binding Symbol}" />
-                    <TextBlock VerticalAlignment="Center" TextAlignment="Center" FontSize="12.5" FontWeight="SemiBold" Foreground="{StaticResource HeadlineBrush}" Text="{Binding DisplayLabel}" />
+            <Border x:Name="Chip"
+                    MinWidth="60"
+                    Padding="12,7"
+                    Background="#F8FBFD"
+                    BorderBrush="#D4E0EA"
+                    BorderThickness="1"
+                    CornerRadius="10"
+                    Cursor="Hand"
+                    ToolTip="{Binding Label}">
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center">
+                    <controls:SymbolSwatchControl x:Name="ChipSymbol"
+                                                  Width="20"
+                                                  Height="20"
+                                                  Margin="0,0,5,0"
+                                                  StrokeThickness="1.8"
+                                                  Symbol="{Binding Symbol}" />
+                    <TextBlock VerticalAlignment="Center"
+                               TextAlignment="Center"
+                               FontSize="12.5"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource HeadlineBrush}"
+                               Text="{Binding DisplayLabel}" />
                 </StackPanel>
             </Border>
             <DataTemplate.Triggers>
@@ -103,11 +147,31 @@
             </DataTemplate.Triggers>
         </DataTemplate>
 
+        <!-- ── Compact chip template (scale, datum conditions) ── -->
         <DataTemplate x:Key="InlineChipItemTemplate">
-            <Border x:Name="Chip" MinWidth="36" Padding="10,5" Background="#F8FBFD" BorderBrush="#D4E0EA" BorderThickness="1" CornerRadius="8" Cursor="Hand" ToolTip="{Binding Label}">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <controls:SymbolSwatchControl x:Name="ChipSymbol" Width="16" Height="16" Margin="0,0,4,0" StrokeThickness="1.6" Symbol="{Binding Symbol}" />
-                    <TextBlock VerticalAlignment="Center" TextAlignment="Center" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource HeadlineBrush}" Text="{Binding DisplayLabel}" />
+            <Border x:Name="Chip"
+                    MinWidth="36"
+                    Padding="10,5"
+                    Background="#F8FBFD"
+                    BorderBrush="#D4E0EA"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Cursor="Hand"
+                    ToolTip="{Binding Label}">
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center">
+                    <controls:SymbolSwatchControl x:Name="ChipSymbol"
+                                                  Width="16"
+                                                  Height="16"
+                                                  Margin="0,0,4,0"
+                                                  StrokeThickness="1.6"
+                                                  Symbol="{Binding Symbol}" />
+                    <TextBlock VerticalAlignment="Center"
+                               TextAlignment="Center"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource HeadlineBrush}"
+                               Text="{Binding DisplayLabel}" />
                 </StackPanel>
             </Border>
             <DataTemplate.Triggers>
@@ -121,7 +185,42 @@
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
+        <DataTemplate x:Key="ColorChipItemTemplate">
+            <Border x:Name="Chip"
+                    MinWidth="72"
+                    Padding="10,7"
+                    Background="#F8FBFD"
+                    BorderBrush="#D4E0EA"
+                    BorderThickness="1"
+                    CornerRadius="10"
+                    Cursor="Hand"
+                    ToolTip="{Binding Label}">
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center">
+                    <Ellipse Width="14"
+                             Height="14"
+                             Margin="0,0,6,0"
+                             Stroke="#D4E0EA"
+                             StrokeThickness="1"
+                             Fill="{Binding SwatchHex}" />
+                    <TextBlock VerticalAlignment="Center"
+                               TextAlignment="Center"
+                               FontSize="12.5"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource HeadlineBrush}"
+                               Text="{Binding DisplayLabel}" />
+                </StackPanel>
+            </Border>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                    <Setter TargetName="Chip" Property="Background" Value="{StaticResource AccentSoftBrush}" />
+                    <Setter TargetName="Chip" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                    <Setter TargetName="Chip" Property="BorderThickness" Value="2" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
 
+        <!-- ── Action button style ── -->
         <Style x:Key="ActionButtonStyle" TargetType="Button">
             <Setter Property="FontSize" Value="13" />
             <Setter Property="FontWeight" Value="SemiBold" />
@@ -130,8 +229,14 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Bd" Background="{StaticResource SurfaceBrush}" CornerRadius="10" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True" TextElement.Foreground="{StaticResource AccentBrush}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border x:Name="Bd"
+                                Background="{StaticResource SurfaceBrush}"
+                                CornerRadius="10"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True"
+                                TextElement.Foreground="{StaticResource AccentBrush}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -157,6 +262,9 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <!-- ════════════════════════════════════════════ -->
+        <!-- CONTENT AREA (preview + editor)             -->
+        <!-- ════════════════════════════════════════════ -->
         <Grid Grid.Row="0" Margin="16,16,16,12">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -164,30 +272,66 @@
                 <RowDefinition Height="*" MinHeight="200" />
             </Grid.RowDefinitions>
 
-            <Border Grid.Row="0" Padding="20,16" Background="{StaticResource PanelBackgroundBrush}" BorderBrush="{StaticResource PanelBorderBrush}" BorderThickness="1" CornerRadius="20">
+            <!-- ── Preview card (always visible, fixed height) ── -->
+            <Border Grid.Row="0"
+                    Padding="20,16"
+                    Background="{StaticResource PanelBackgroundBrush}"
+                    BorderBrush="{StaticResource PanelBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="20">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="10" />
-                        <RowDefinition MinHeight="96" />
+                        <RowDefinition MinHeight="70" />
                         <RowDefinition Height="10" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
+                    <!-- Header: title + ISO GPS badge -->
                     <DockPanel Grid.Row="0">
-                        <TextBlock DockPanel.Dock="Left" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource HeadlineBrush}" Text="GDT Creator" />
-                        <Border DockPanel.Dock="Right" HorizontalAlignment="Right" Padding="10,5" Background="{StaticResource AccentSoftBrush}" CornerRadius="10">
-                            <TextBlock Foreground="{StaticResource AccentBrush}" FontSize="12" FontWeight="SemiBold" Text="ISO GPS" />
+                        <TextBlock DockPanel.Dock="Left"
+                                   FontSize="22"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource HeadlineBrush}"
+                                   Text="GDT Creator" />
+                        <Border DockPanel.Dock="Right"
+                                HorizontalAlignment="Right"
+                                Padding="10,5"
+                                Background="{StaticResource AccentSoftBrush}"
+                                CornerRadius="10">
+                            <TextBlock Foreground="{StaticResource AccentBrush}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Text="ISO GPS" />
                         </Border>
                     </DockPanel>
 
-                    <controls:TolerancePreviewControl Grid.Row="2" RenderModel="{Binding RenderModel}" />
+                    <!-- Live preview -->
+                    <controls:TolerancePreviewControl Grid.Row="2"
+                                                      RenderModel="{Binding RenderModel}" />
 
+                    <!-- Footer: status + scale selector -->
                     <DockPanel Grid.Row="4">
-                        <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" FontSize="13" Foreground="{StaticResource BodyBrush}" Text="{Binding StatusMessage}" />
-                        <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="Scale" VerticalAlignment="Center" FontSize="12" Foreground="{StaticResource BodyBrush}" Margin="0,0,8,0" />
-                            <ListBox Style="{StaticResource PickerListBoxStyle}" ItemContainerStyle="{StaticResource InlineChipItemStyle}" ItemTemplate="{StaticResource InlineChipItemTemplate}" ItemsSource="{Binding ScaleOptions}" SelectedItem="{Binding SelectedScale}">
+                        <TextBlock DockPanel.Dock="Left"
+                                   VerticalAlignment="Center"
+                                   FontSize="13"
+                                   Foreground="{StaticResource BodyBrush}"
+                                   Text="{Binding StatusMessage}" />
+                        <StackPanel DockPanel.Dock="Right"
+                                    HorizontalAlignment="Right"
+                                    Orientation="Horizontal"
+                                    VerticalAlignment="Center">
+                            <TextBlock Text="Scale"
+                                       VerticalAlignment="Center"
+                                       FontSize="12"
+                                       Foreground="{StaticResource BodyBrush}"
+                                       Margin="0,0,8,0" />
+                            <ListBox Style="{StaticResource PickerListBoxStyle}"
+                                     ItemContainerStyle="{StaticResource InlineChipItemStyle}"
+                                     ItemTemplate="{StaticResource InlineChipItemTemplate}"
+                                     ItemsSource="{Binding ScaleOptions}"
+                                     SelectedItem="{Binding SelectedScale}">
                                 <ListBox.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel Orientation="Horizontal" />
@@ -199,12 +343,30 @@
                 </Grid>
             </Border>
 
-            <Border Grid.Row="2" Background="{StaticResource PanelBackgroundBrush}" BorderBrush="{StaticResource PanelBorderBrush}" BorderThickness="1" CornerRadius="20">
-                <ScrollViewer x:Name="EditorScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <!-- ── Editor card (scrollable, fills remaining height) ── -->
+            <Border Grid.Row="2"
+                    Background="{StaticResource PanelBackgroundBrush}"
+                    BorderBrush="{StaticResource PanelBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="20">
+                <ScrollViewer x:Name="EditorScrollViewer"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
                     <StackPanel Margin="20,18">
-                        <TextBlock Margin="0,0,0,8" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource HeadlineBrush}" Text="Characteristic" />
 
-                        <ListBox Margin="0,0,0,14" Style="{StaticResource PickerListBoxStyle}" ItemContainerStyle="{StaticResource CharacteristicItemStyle}" ItemTemplate="{StaticResource CharacteristicItemTemplate}" ItemsSource="{Binding Source={StaticResource GroupedCharacteristics}}" SelectedItem="{Binding SelectedCharacteristic}">
+                        <!-- ── SECTION: Characteristic ── -->
+                        <TextBlock Margin="0,0,0,8"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource HeadlineBrush}"
+                                   Text="Characteristic" />
+
+                        <ListBox Margin="0,0,0,14"
+                                 Style="{StaticResource PickerListBoxStyle}"
+                                 ItemContainerStyle="{StaticResource CharacteristicItemStyle}"
+                                 ItemTemplate="{StaticResource CharacteristicItemTemplate}"
+                                 ItemsSource="{Binding Source={StaticResource GroupedCharacteristics}}"
+                                 SelectedItem="{Binding SelectedCharacteristic}">
                             <ListBox.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel />
@@ -214,7 +376,11 @@
                                 <GroupStyle>
                                     <GroupStyle.HeaderTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Name}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource SubtleBrush}" Margin="2,4,0,6" />
+                                            <TextBlock Text="{Binding Name}"
+                                                       FontSize="11"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{StaticResource SubtleBrush}"
+                                                       Margin="2,4,0,6" />
                                         </DataTemplate>
                                     </GroupStyle.HeaderTemplate>
                                     <GroupStyle.Panel>
@@ -226,17 +392,37 @@
                             </ListBox.GroupStyle>
                         </ListBox>
 
-                        <TextBlock Margin="0,4,0,10" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource HeadlineBrush}" Text="Tolerance" />
+                        <!-- ── SECTION: Tolerance ── -->
+                        <TextBlock Margin="0,4,0,10"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource HeadlineBrush}"
+                                   Text="Tolerance" />
 
                         <WrapPanel Margin="0,0,0,4">
+                            <!-- Value -->
                             <StackPanel MinWidth="150" Margin="0,0,20,10">
-                                <TextBlock Margin="0,0,0,6" FontSize="12.5" Foreground="{StaticResource BodyBrush}" Text="Value" />
-                                <TextBox FontSize="16" FontWeight="SemiBold" Padding="10,8" Text="{Binding ToleranceValue, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Margin="0,0,0,6"
+                                           FontSize="12.5"
+                                           Foreground="{StaticResource BodyBrush}"
+                                           Text="Value" />
+                                <TextBox FontSize="16"
+                                         FontWeight="SemiBold"
+                                         Padding="10,8"
+                                         Text="{Binding ToleranceValue, UpdateSourceTrigger=PropertyChanged}" />
                             </StackPanel>
 
-                            <StackPanel MinWidth="220" Margin="0,0,20,10">
-                                <TextBlock Margin="0,0,0,6" FontSize="12.5" Foreground="{StaticResource BodyBrush}" Text="Zone modifier" />
-                                <ListBox Style="{StaticResource PickerListBoxStyle}" ItemContainerStyle="{StaticResource ChipItemStyle}" ItemTemplate="{StaticResource ChipItemTemplate}" ItemsSource="{Binding ZoneModifiers}" SelectedItem="{Binding SelectedZoneModifier}">
+                            <!-- Zone modifier -->
+                            <StackPanel MinWidth="180" Margin="0,0,20,10">
+                                <TextBlock Margin="0,0,0,6"
+                                           FontSize="12.5"
+                                           Foreground="{StaticResource BodyBrush}"
+                                           Text="Zone modifier" />
+                                <ListBox Style="{StaticResource PickerListBoxStyle}"
+                                         ItemContainerStyle="{StaticResource ChipItemStyle}"
+                                         ItemTemplate="{StaticResource ChipItemTemplate}"
+                                         ItemsSource="{Binding ZoneModifiers}"
+                                         SelectedItem="{Binding SelectedZoneModifier}">
                                     <ListBox.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <WrapPanel />
@@ -245,9 +431,17 @@
                                 </ListBox>
                             </StackPanel>
 
-                            <StackPanel MinWidth="220" Margin="0,0,0,10">
-                                <TextBlock Margin="0,0,0,6" FontSize="12.5" Foreground="{StaticResource BodyBrush}" Text="Material condition" />
-                                <ListBox Style="{StaticResource PickerListBoxStyle}" ItemContainerStyle="{StaticResource ChipItemStyle}" ItemTemplate="{StaticResource ChipItemTemplate}" ItemsSource="{Binding ToleranceMaterialConditions}" SelectedItem="{Binding SelectedToleranceMaterialCondition}">
+                            <!-- Material condition -->
+                            <StackPanel MinWidth="180" Margin="0,0,0,10">
+                                <TextBlock Margin="0,0,0,6"
+                                           FontSize="12.5"
+                                           Foreground="{StaticResource BodyBrush}"
+                                           Text="Material condition" />
+                                <ListBox Style="{StaticResource PickerListBoxStyle}"
+                                         ItemContainerStyle="{StaticResource ChipItemStyle}"
+                                         ItemTemplate="{StaticResource ChipItemTemplate}"
+                                         ItemsSource="{Binding ToleranceMaterialConditions}"
+                                         SelectedItem="{Binding SelectedToleranceMaterialCondition}">
                                     <ListBox.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <WrapPanel />
@@ -256,19 +450,103 @@
                                 </ListBox>
                             </StackPanel>
                         </WrapPanel>
+
+                        <!-- Modifiers -->
+                        <WrapPanel Margin="0,0,0,20">
+                            <CheckBox Margin="0,0,18,6"
+                                      IsChecked="{Binding ProjectedToleranceZone}"
+                                      Content="Projected tolerance zone" />
+                            <CheckBox Margin="0,0,18,6"
+                                      IsChecked="{Binding FreeState}"
+                                      Content="Free state" />
+                            <CheckBox Margin="0,0,18,6"
+                                      IsChecked="{Binding CombinedZone}"
+                                      Content="Combined zone (CZ)" />
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6" VerticalAlignment="Center">
+                                <TextBlock Text="UZ"
+                                           VerticalAlignment="Center"
+                                           FontSize="12.5"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource BodyBrush}"
+                                           Margin="0,0,6,0" />
+                                <TextBox Width="60"
+                                         FontSize="14"
+                                         FontWeight="SemiBold"
+                                         Padding="6,5"
+                                         ToolTip="Unequally disposed value (leave empty to disable)"
+                                         Text="{Binding UnequallyDisposedValue, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                        </WrapPanel>
+
+                        <!-- ── SECTION: Context text ── -->
+                        <TextBlock Margin="0,0,0,10"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource HeadlineBrush}"
+                                   Text="Context text" />
 
                         <WrapPanel Margin="0,0,0,20">
-                            <CheckBox Margin="0,0,18,6" IsChecked="{Binding ProjectedToleranceZone}" Content="Projected tolerance zone" />
-                            <CheckBox Margin="0,0,18,6" IsChecked="{Binding FreeState}" Content="Free state" />
-                            <CheckBox Margin="0,0,18,6" IsChecked="{Binding CombinedZone}" Content="Combined zone (CZ)" />
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6" VerticalAlignment="Center">
-                                <TextBlock Text="UZ" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold" Foreground="{StaticResource BodyBrush}" Margin="0,0,6,0" />
-                                <TextBox Width="60" FontSize="14" FontWeight="SemiBold" Padding="6,5" ToolTip="Unequally disposed value" Text="{Binding UnequallyDisposedValue, UpdateSourceTrigger=PropertyChanged}" />
+                            <StackPanel MinWidth="260" Margin="0,0,20,10">
+                                <TextBlock Margin="0,0,0,6"
+                                           FontSize="12.5"
+                                           Foreground="{StaticResource BodyBrush}"
+                                           Text="Text above" />
+                                <TextBox FontSize="14"
+                                         Padding="10,8"
+                                         Text="{Binding TopText, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+
+                            <StackPanel MinWidth="260" Margin="0,0,20,10">
+                                <TextBlock Margin="0,0,0,6"
+                                           FontSize="12.5"
+                                           Foreground="{StaticResource BodyBrush}"
+                                           Text="Text below" />
+                                <TextBox FontSize="14"
+                                         Padding="10,8"
+                                         Text="{Binding BottomText, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+
+                            <StackPanel MinWidth="320" Margin="0,0,20,10">
+                                <TextBlock Margin="0,0,0,6"
+                                           FontSize="12.5"
+                                           Foreground="{StaticResource BodyBrush}"
+                                           Text="Output color" />
+                                <ListBox Style="{StaticResource PickerListBoxStyle}"
+                                         ItemContainerStyle="{StaticResource ChipItemStyle}"
+                                         ItemTemplate="{StaticResource ColorChipItemTemplate}"
+                                         ItemsSource="{Binding ContentColorOptions}"
+                                         SelectedItem="{Binding SelectedContentColor}">
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
+                                </ListBox>
+                            </StackPanel>
+
+                            <StackPanel MinWidth="150" Margin="0,0,0,10">
+                                <TextBlock Margin="0,0,0,6"
+                                           FontSize="12.5"
+                                           Foreground="{StaticResource BodyBrush}"
+                                           Text="Custom hex" />
+                                <TextBox FontSize="14"
+                                         FontWeight="SemiBold"
+                                         Padding="10,8"
+                                         ToolTip="Use a hex color such as #102A43"
+                                         Text="{Binding ContentColorHex, UpdateSourceTrigger=LostFocus}" />
                             </StackPanel>
                         </WrapPanel>
-
-                        <TextBlock Margin="0,0,0,6" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource HeadlineBrush}" Text="Datum Reference System" />
-                        <TextBlock Margin="0,0,0,10" FontSize="12.5" Foreground="{StaticResource BodyBrush}" Text="{Binding DatumSectionHint}" TextWrapping="Wrap" />
+                        <!-- ── SECTION: Datum Reference System ── -->
+                        <TextBlock Margin="0,0,0,6"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource HeadlineBrush}"
+                                   Text="Datum Reference System" />
+                        <TextBlock Margin="0,0,0,10"
+                                   FontSize="12.5"
+                                   Foreground="{StaticResource BodyBrush}"
+                                   Text="{Binding DatumSectionHint}"
+                                   TextWrapping="Wrap" />
 
                         <StackPanel Margin="0,0,0,12">
                             <StackPanel.Style>
@@ -281,42 +559,57 @@
                                     </Style.Triggers>
                                 </Style>
                             </StackPanel.Style>
-
                             <ItemsControl ItemsSource="{Binding DatumSlots}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Margin="0,0,0,10" Padding="0,0,0,6" BorderBrush="#E2EBF2" BorderThickness="0,0,0,1" IsEnabled="{Binding DataContext.AreDatumInputsEnabled, RelativeSource={RelativeSource AncestorType=Window}}">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="80" />
-                                                    <ColumnDefinition Width="90" />
-                                                    <ColumnDefinition Width="12" />
-                                                    <ColumnDefinition Width="*" />
-                                                </Grid.ColumnDefinitions>
-
-                                                <TextBlock Grid.Column="0" VerticalAlignment="Top" Margin="0,8,0,0" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource BodyBrush}" Text="{Binding Ordinal}" />
-                                                <TextBox Grid.Column="1" MaxLength="4" HorizontalContentAlignment="Center" VerticalAlignment="Top" FontSize="16" FontWeight="SemiBold" Padding="6" Text="{Binding Label, UpdateSourceTrigger=PropertyChanged}" />
-
-                                                <StackPanel Grid.Column="3">
-                                                    <TextBlock Margin="0,0,0,5" FontSize="12" Foreground="{StaticResource BodyBrush}" Text="Material condition" />
-                                                    <ListBox Style="{StaticResource PickerListBoxStyle}" ItemContainerStyle="{StaticResource InlineChipItemStyle}" ItemTemplate="{StaticResource InlineChipItemTemplate}" ItemsSource="{Binding DataContext.DatumConditionOptions, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValuePath="Value" SelectedValue="{Binding MaterialCondition}">
-                                                        <ListBox.ItemsPanel>
-                                                            <ItemsPanelTemplate>
-                                                                <WrapPanel />
-                                                            </ItemsPanelTemplate>
-                                                        </ListBox.ItemsPanel>
-                                                    </ListBox>
-
-
-                                                </StackPanel>
-                                            </Grid>
-                                        </Border>
+                                        <Grid Margin="0,0,0,8"
+                                              IsEnabled="{Binding DataContext.AreDatumInputsEnabled, RelativeSource={RelativeSource AncestorType=Window}}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="80" />
+                                                <ColumnDefinition Width="80" />
+                                                <ColumnDefinition Width="12" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0"
+                                                       VerticalAlignment="Center"
+                                                       FontSize="13"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{StaticResource BodyBrush}"
+                                                       Text="{Binding Ordinal}" />
+                                            <TextBox Grid.Column="1"
+                                                     MaxLength="4"
+                                                     HorizontalContentAlignment="Center"
+                                                     VerticalAlignment="Center"
+                                                     FontSize="16"
+                                                     FontWeight="SemiBold"
+                                                     Padding="6"
+                                                     Text="{Binding Label, UpdateSourceTrigger=PropertyChanged}" />
+                                            <ListBox Grid.Column="3"
+                                                     VerticalAlignment="Center"
+                                                     Style="{StaticResource PickerListBoxStyle}"
+                                                     ItemContainerStyle="{StaticResource InlineChipItemStyle}"
+                                                     ItemTemplate="{StaticResource InlineChipItemTemplate}"
+                                                     ItemsSource="{Binding DataContext.DatumConditionOptions, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                     SelectedValuePath="Value"
+                                                     SelectedValue="{Binding MaterialCondition}">
+                                                <ListBox.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapPanel />
+                                                    </ItemsPanelTemplate>
+                                                </ListBox.ItemsPanel>
+                                            </ListBox>
+                                        </Grid>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                         </StackPanel>
 
-                        <Border Padding="12,10" Background="#FFF7F5" BorderBrush="#F0B8B0" BorderThickness="1" CornerRadius="12">
+                        <!-- ── Validation errors ── -->
+                        <Border Padding="12,10"
+                                Background="#FFF7F5"
+                                BorderBrush="#F0B8B0"
+                                BorderThickness="1"
+                                CornerRadius="12">
                             <Border.Style>
                                 <Style TargetType="Border">
                                     <Setter Property="Visibility" Value="Visible" />
@@ -330,32 +623,75 @@
                             <ItemsControl ItemsSource="{Binding ValidationErrors}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Margin="0,0,0,3" Foreground="{StaticResource ErrorBrush}" FontSize="12.5" Text="{Binding}" TextWrapping="Wrap" />
+                                        <TextBlock Margin="0,0,0,3"
+                                                   Foreground="{StaticResource ErrorBrush}"
+                                                   FontSize="12.5"
+                                                   Text="{Binding}"
+                                                   TextWrapping="Wrap" />
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                         </Border>
+
                     </StackPanel>
                 </ScrollViewer>
             </Border>
         </Grid>
 
-        <Border Grid.Row="1" Padding="20,10" Background="{StaticResource PanelBackgroundBrush}" BorderBrush="{StaticResource PanelBorderBrush}" BorderThickness="0,1,0,0">
+        <!-- ════════════════════════════════════════════ -->
+        <!-- ACTION BAR (always visible, bottom)         -->
+        <!-- ════════════════════════════════════════════ -->
+        <Border Grid.Row="1"
+                Padding="20,10"
+                Background="{StaticResource PanelBackgroundBrush}"
+                BorderBrush="{StaticResource PanelBorderBrush}"
+                BorderThickness="0,1,0,0">
             <WrapPanel VerticalAlignment="Center">
+                <!-- Copy group -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,20,4">
-                    <TextBlock Text="Copy" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource BodyBrush}" Margin="0,0,10,0" />
-                    <Button Content="Image" Padding="14,7" Margin="0,0,6,0" Command="{Binding CopyImageCommand}" Style="{StaticResource ActionButtonStyle}" />
-                    <Button Content="Vector" Padding="14,7" Command="{Binding CopyVectorCommand}" Style="{StaticResource ActionButtonStyle}" />
+                    <TextBlock Text="Copy"
+                               VerticalAlignment="Center"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource BodyBrush}"
+                               Margin="0,0,10,0" />
+                    <Button Content="Image"
+                            Padding="14,7"
+                            Margin="0,0,6,0"
+                            Command="{Binding CopyImageCommand}"
+                            Style="{StaticResource ActionButtonStyle}" />
+                    <Button Content="Vector"
+                            Padding="14,7"
+                            Command="{Binding CopyVectorCommand}"
+                            Style="{StaticResource ActionButtonStyle}" />
                 </StackPanel>
 
+                <!-- Export group -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                    <TextBlock Text="Export" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource BodyBrush}" Margin="0,0,10,0" />
-                    <Button Content="PNG" Padding="14,7" Margin="0,0,6,0" Command="{Binding ExportPngCommand}" Style="{StaticResource ActionButtonStyle}" />
-                    <Button Content="SVG" Padding="14,7" Margin="0,0,6,0" Command="{Binding ExportSvgCommand}" Style="{StaticResource ActionButtonStyle}" />
-                    <Button Content="EMF" Padding="14,7" Command="{Binding ExportEmfCommand}" Style="{StaticResource ActionButtonStyle}" />
+                    <TextBlock Text="Export"
+                               VerticalAlignment="Center"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource BodyBrush}"
+                               Margin="0,0,10,0" />
+                    <Button Content="PNG"
+                            Padding="14,7"
+                            Margin="0,0,6,0"
+                            Command="{Binding ExportPngCommand}"
+                            Style="{StaticResource ActionButtonStyle}" />
+                    <Button Content="SVG"
+                            Padding="14,7"
+                            Margin="0,0,6,0"
+                            Command="{Binding ExportSvgCommand}"
+                            Style="{StaticResource ActionButtonStyle}" />
+                    <Button Content="EMF"
+                            Padding="14,7"
+                            Command="{Binding ExportEmfCommand}"
+                            Style="{StaticResource ActionButtonStyle}" />
                 </StackPanel>
             </WrapPanel>
         </Border>
     </Grid>
 </Window>
+
 

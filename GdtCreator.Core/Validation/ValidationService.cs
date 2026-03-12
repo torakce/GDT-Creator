@@ -54,30 +54,25 @@ public sealed class ValidationService : IValidationService
 
     private static bool IsPositiveTolerance(string value)
     {
-        return TryParseToleranceValue(value, out var parsedValue) && parsedValue > 0;
-    }
-
-    private static bool TryParseToleranceValue(string value, out decimal parsedValue)
-    {
-        var trimmed = value.Trim();
-        var styles = NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign;
-
-        if (decimal.TryParse(trimmed, styles, CultureInfo.InvariantCulture, out parsedValue))
+        if (decimal.TryParse(
+                value,
+                NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign,
+                CultureInfo.InvariantCulture,
+                out var invariantResult))
         {
-            return true;
+            return invariantResult > 0;
         }
 
-        if (decimal.TryParse(trimmed, styles, CultureInfo.CurrentCulture, out parsedValue))
+        if (decimal.TryParse(
+                value,
+                NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign,
+                CultureInfo.CurrentCulture,
+                out var currentResult))
         {
-            return true;
+            return currentResult > 0;
         }
 
-        if (decimal.TryParse(trimmed, styles, CultureInfo.GetCultureInfo("fr-FR"), out parsedValue))
-        {
-            return true;
-        }
-
-        return decimal.TryParse(trimmed.Replace(',', '.'), styles, CultureInfo.InvariantCulture, out parsedValue);
+        return false;
     }
 
     private static bool RequiresDatum(GeometricCharacteristic characteristic)
@@ -100,4 +95,3 @@ public sealed class ValidationService : IValidationService
             or GeometricCharacteristic.Cylindricity;
     }
 }
-

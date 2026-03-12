@@ -16,5 +16,7 @@ public sealed class OptionItem<T>
 
     public RenderSymbol? Symbol { get; init; }
 
+    public string? SwatchHex { get; init; }
+
     public string DisplayLabel => ShortLabel ?? Label;
 }

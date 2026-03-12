@@ -22,11 +22,15 @@ public sealed class MainViewModel : ViewModelBase
     private OptionItem<ToleranceZoneModifier> _selectedZoneModifier = null!;
     private OptionItem<ToleranceMaterialCondition> _selectedToleranceMaterialCondition = null!;
     private OptionItem<double> _selectedScale = null!;
+    private OptionItem<string>? _selectedContentColor;
     private string _toleranceValue = "0.10";
     private bool _projectedToleranceZone;
     private bool _freeState;
     private bool _combinedZone;
     private string _unequallyDisposedValue = "";
+    private string _topText = "";
+    private string _bottomText = "";
+    private string _contentColorHex = "#102A43";
     private bool _areDatumInputsEnabled;
     private string _datumSectionHint = "Enter up to three datum references.";
     private ToleranceRenderModel? _renderModel;
@@ -67,31 +71,23 @@ public sealed class MainViewModel : ViewModelBase
         ZoneModifiers = new ObservableCollection<OptionItem<ToleranceZoneModifier>>
         {
             new() { Label = "No modifier", ShortLabel = "None", Value = ToleranceZoneModifier.None },
-            new() { Label = "Diameter", ShortLabel = "Diameter", Value = ToleranceZoneModifier.Diameter, Symbol = RenderSymbol.Diameter },
-            new() { Label = "Spherical diameter", ShortLabel = "Spherical dia", Value = ToleranceZoneModifier.SphericalDiameter, Symbol = RenderSymbol.SphericalDiameter },
-            new() { Label = "Spherical radius", ShortLabel = "Spherical rad", Value = ToleranceZoneModifier.SphericalRadius, Symbol = RenderSymbol.SphericalRadius }
+            new() { Label = "Diameter", ShortLabel = "\u2300", Value = ToleranceZoneModifier.Diameter, Symbol = RenderSymbol.Diameter },
+            new() { Label = "Spherical diameter", ShortLabel = "S\u2300", Value = ToleranceZoneModifier.SphericalDiameter, Symbol = RenderSymbol.SphericalDiameter },
+            new() { Label = "Spherical radius", ShortLabel = "SR", Value = ToleranceZoneModifier.SphericalRadius, Symbol = RenderSymbol.SphericalRadius }
         };
 
         ToleranceMaterialConditions = new ObservableCollection<OptionItem<ToleranceMaterialCondition>>
         {
             new() { Label = "RFS / no modifier", ShortLabel = "None", Value = ToleranceMaterialCondition.None },
-            new() { Label = "Maximum material condition", ShortLabel = "MMC", Value = ToleranceMaterialCondition.MaximumMaterialCondition, Symbol = RenderSymbol.MaximumMaterialCondition },
-            new() { Label = "Least material condition", ShortLabel = "LMC", Value = ToleranceMaterialCondition.LeastMaterialCondition, Symbol = RenderSymbol.LeastMaterialCondition }
+            new() { Label = "Maximum material condition", ShortLabel = "\u24C2", Value = ToleranceMaterialCondition.MaximumMaterialCondition, Symbol = RenderSymbol.MaximumMaterialCondition },
+            new() { Label = "Least material condition", ShortLabel = "\u24C1", Value = ToleranceMaterialCondition.LeastMaterialCondition, Symbol = RenderSymbol.LeastMaterialCondition }
         };
 
         DatumConditionOptions = new ObservableCollection<OptionItem<DatumMaterialCondition>>
         {
             new() { Label = "None", ShortLabel = "None", Value = DatumMaterialCondition.None },
-            new() { Label = "MMC", ShortLabel = "MMC", Value = DatumMaterialCondition.MaximumMaterialCondition, Symbol = RenderSymbol.MaximumMaterialCondition },
-            new() { Label = "LMC", ShortLabel = "LMC", Value = DatumMaterialCondition.LeastMaterialCondition, Symbol = RenderSymbol.LeastMaterialCondition }
-        };
-
-        DatumFeatureSymbolOptions = new ObservableCollection<OptionItem<DatumFeatureSymbolStyle>>
-        {
-            new() { Label = "Attached datum feature symbol", ShortLabel = "Direct", Value = DatumFeatureSymbolStyle.Direct, Symbol = RenderSymbol.DatumFeatureDirect },
-            new() { Label = "Leader to the left", ShortLabel = "Left", Value = DatumFeatureSymbolStyle.LeaderLeft, Symbol = RenderSymbol.DatumFeatureLeaderLeft },
-            new() { Label = "Leader to the right", ShortLabel = "Right", Value = DatumFeatureSymbolStyle.LeaderRight, Symbol = RenderSymbol.DatumFeatureLeaderRight },
-            new() { Label = "Leader downward", ShortLabel = "Down", Value = DatumFeatureSymbolStyle.LeaderDown, Symbol = RenderSymbol.DatumFeatureLeaderDown }
+            new() { Label = "MMC", ShortLabel = "\u24C2", Value = DatumMaterialCondition.MaximumMaterialCondition, Symbol = RenderSymbol.MaximumMaterialCondition },
+            new() { Label = "LMC", ShortLabel = "\u24C1", Value = DatumMaterialCondition.LeastMaterialCondition, Symbol = RenderSymbol.LeastMaterialCondition }
         };
 
         ScaleOptions = new ObservableCollection<OptionItem<double>>
@@ -99,6 +95,16 @@ public sealed class MainViewModel : ViewModelBase
             new() { Label = "1x", Value = 1d },
             new() { Label = "2x", Value = 2d },
             new() { Label = "4x", Value = 4d }
+        };
+
+        ContentColorOptions = new ObservableCollection<OptionItem<string>>
+        {
+            new() { Label = "Navy", Value = "#102A43", SwatchHex = "#102A43" },
+            new() { Label = "Black", Value = "#111111", SwatchHex = "#111111" },
+            new() { Label = "Gray", Value = "#5B6674", SwatchHex = "#5B6674" },
+            new() { Label = "Red", Value = "#B42318", SwatchHex = "#B42318" },
+            new() { Label = "Green", Value = "#0F766E", SwatchHex = "#0F766E" },
+            new() { Label = "Orange", Value = "#B54708", SwatchHex = "#B54708" }
         };
 
         DatumSlots = new ObservableCollection<DatumSlotViewModel>
@@ -133,9 +139,9 @@ public sealed class MainViewModel : ViewModelBase
 
     public ObservableCollection<OptionItem<DatumMaterialCondition>> DatumConditionOptions { get; }
 
-    public ObservableCollection<OptionItem<DatumFeatureSymbolStyle>> DatumFeatureSymbolOptions { get; }
-
     public ObservableCollection<OptionItem<double>> ScaleOptions { get; }
+
+    public ObservableCollection<OptionItem<string>> ContentColorOptions { get; }
 
     public ObservableCollection<DatumSlotViewModel> DatumSlots { get; }
 
@@ -194,6 +200,25 @@ public sealed class MainViewModel : ViewModelBase
         {
             if (SetProperty(ref _selectedScale, value) && !_isRefreshing)
             {
+                RefreshState();
+            }
+        }
+    }
+
+    public OptionItem<string>? SelectedContentColor
+    {
+        get => _selectedContentColor;
+        set
+        {
+            if (SetProperty(ref _selectedContentColor, value) && !_isRefreshing && value is not null)
+            {
+                var normalizedColor = NormalizeColorHex(value.Value);
+                if (!string.Equals(_contentColorHex, normalizedColor, StringComparison.Ordinal))
+                {
+                    _contentColorHex = normalizedColor;
+                    RaisePropertyChanged(nameof(ContentColorHex));
+                }
+
                 RefreshState();
             }
         }
@@ -259,6 +284,44 @@ public sealed class MainViewModel : ViewModelBase
         }
     }
 
+    public string TopText
+    {
+        get => _topText;
+        set
+        {
+            if (SetProperty(ref _topText, value) && !_isRefreshing)
+            {
+                RefreshState();
+            }
+        }
+    }
+
+    public string BottomText
+    {
+        get => _bottomText;
+        set
+        {
+            if (SetProperty(ref _bottomText, value) && !_isRefreshing)
+            {
+                RefreshState();
+            }
+        }
+    }
+
+    public string ContentColorHex
+    {
+        get => _contentColorHex;
+        set
+        {
+            var normalizedColor = NormalizeColorHex(value);
+            if (SetProperty(ref _contentColorHex, normalizedColor) && !_isRefreshing)
+            {
+                SyncSelectedContentColor();
+                RefreshState();
+            }
+        }
+    }
+
     public bool AreDatumInputsEnabled
     {
         get => _areDatumInputsEnabled;
@@ -307,6 +370,10 @@ public sealed class MainViewModel : ViewModelBase
         FreeState = spec.FreeState;
         CombinedZone = spec.CombinedZone;
         UnequallyDisposedValue = spec.UnequallyDisposedValue ?? "";
+        TopText = spec.TopText ?? "";
+        BottomText = spec.BottomText ?? "";
+        ContentColorHex = NormalizeColorHex(spec.ContentColorHex);
+        SyncSelectedContentColor();
 
         for (var index = 0; index < DatumSlots.Count; index++)
         {
@@ -323,7 +390,7 @@ public sealed class MainViewModel : ViewModelBase
     {
         AreDatumInputsEnabled = CharacteristicAllowsDatums(SelectedCharacteristic?.Value ?? GeometricCharacteristic.Position);
         DatumSectionHint = AreDatumInputsEnabled
-            ? "Enter up to three datum references and choose the datum feature symbol direction."
+            ? "Enter up to three datum references."
             : "This characteristic does not use datum references.";
 
         var spec = BuildSpec();
@@ -354,14 +421,53 @@ public sealed class MainViewModel : ViewModelBase
         {
             Characteristic = characteristic,
             ToleranceValue = ToleranceValue,
-            ZoneModifier = SelectedZoneModifier?.Value ?? ToleranceZoneModifier.None,
+            ZoneModifier = SelectedZoneModifier?.Value ?? ToleranceZoneModifier.Diameter,
             ToleranceMaterialCondition = SelectedToleranceMaterialCondition?.Value ?? ToleranceMaterialCondition.None,
             ProjectedToleranceZone = ProjectedToleranceZone,
             FreeState = FreeState,
             CombinedZone = CombinedZone,
             UnequallyDisposedValue = string.IsNullOrWhiteSpace(UnequallyDisposedValue) ? null : UnequallyDisposedValue,
+            TopText = string.IsNullOrWhiteSpace(TopText) ? null : TopText,
+            BottomText = string.IsNullOrWhiteSpace(BottomText) ? null : BottomText,
+            ContentColorHex = ContentColorHex,
             DatumReferences = datumReferences
         };
+    }
+
+    private void SyncSelectedContentColor()
+    {
+        var matchingOption = ContentColorOptions.FirstOrDefault(option => string.Equals(option.Value, _contentColorHex, StringComparison.OrdinalIgnoreCase));
+        SetProperty(ref _selectedContentColor, matchingOption, nameof(SelectedContentColor));
+    }
+
+    private static string NormalizeColorHex(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return "#102A43";
+        }
+
+        var trimmed = value.Trim();
+        if (trimmed.StartsWith("#"))
+        {
+            trimmed = trimmed[1..];
+        }
+
+        if (trimmed.Length == 3 && trimmed.All(IsHexDigit))
+        {
+            trimmed = string.Concat(trimmed.Select(ch => new string(ch, 2)));
+        }
+
+        return trimmed.Length == 6 && trimmed.All(IsHexDigit)
+            ? $"#{trimmed.ToUpperInvariant()}"
+            : "#102A43";
+    }
+
+    private static bool IsHexDigit(char character)
+    {
+        return character is >= '0' and <= '9'
+            or >= 'A' and <= 'F'
+            or >= 'a' and <= 'f';
     }
 
     private static bool CharacteristicAllowsDatums(GeometricCharacteristic characteristic)
@@ -435,4 +541,3 @@ public sealed class MainViewModel : ViewModelBase
         ((RelayCommand)ExportEmfCommand).NotifyCanExecuteChanged();
     }
 }
-

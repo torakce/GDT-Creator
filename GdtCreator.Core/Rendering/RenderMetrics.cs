@@ -20,10 +20,6 @@ public static class RenderMetrics
             {
                 RenderSymbol.SphericalDiameter => 28d,
                 RenderSymbol.SphericalRadius => 32d,
-                RenderSymbol.DatumFeatureDirect => 20d,
-                RenderSymbol.DatumFeatureLeaderLeft => 24d,
-                RenderSymbol.DatumFeatureLeaderRight => 24d,
-                RenderSymbol.DatumFeatureLeaderDown => 24d,
                 RenderSymbol.MaximumMaterialCondition or RenderSymbol.LeastMaterialCondition or RenderSymbol.ProjectedToleranceZone or RenderSymbol.FreeState => 22d,
                 _ => 20d
             };
