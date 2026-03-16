@@ -1,11 +1,15 @@
 using System.Globalization;
+using System.Text.RegularExpressions;
 using GdtCreator.Core.Enums;
 using GdtCreator.Core.Models;
+using GdtCreator.Core.Rendering;
 
 namespace GdtCreator.Core.Validation;
 
 public sealed class ValidationService : IValidationService
 {
+    private static readonly Regex NumericTokenPattern = new(@"[+-]?(?:\d+(?:[\.,]\d+)?|[\.,]\d+)", RegexOptions.Compiled);
+
     public ValidationResult Validate(GeometricToleranceSpec spec)
     {
         ArgumentNullException.ThrowIfNull(spec);
@@ -14,7 +18,7 @@ public sealed class ValidationService : IValidationService
 
         if (!IsPositiveTolerance(spec.ToleranceValue))
         {
-            errors.Add("Tolerance value must be a positive number.");
+            errors.Add("Tolerance value must start with a positive number.");
         }
 
         var datumReferences = spec.DatumReferences
@@ -54,25 +58,14 @@ public sealed class ValidationService : IValidationService
 
     private static bool IsPositiveTolerance(string value)
     {
-        if (decimal.TryParse(
-                value,
-                NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign,
-                CultureInfo.InvariantCulture,
-                out var invariantResult))
+        var match = NumericTokenPattern.Match(value ?? string.Empty);
+        if (!match.Success)
         {
-            return invariantResult > 0;
+            return false;
         }
 
-        if (decimal.TryParse(
-                value,
-                NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign,
-                CultureInfo.CurrentCulture,
-                out var currentResult))
-        {
-            return currentResult > 0;
-        }
-
-        return false;
+        return ToleranceRenderService.TryParseToleranceValue(match.Value, out var parsedValue)
+            && parsedValue > 0;
     }
 
     private static bool RequiresDatum(GeometricCharacteristic characteristic)

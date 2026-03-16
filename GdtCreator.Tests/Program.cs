@@ -14,8 +14,11 @@ internal static class Program
 
         Run("Validation rejects datums for flatness", TestValidationRejectsFlatnessDatums, failures);
         Run("Validation requires datum for position", TestValidationRequiresDatumForPosition, failures);
+        Run("Validation accepts inline CZ and UZ tokens", TestValidationAcceptsInlineTokens, failures);
         Run("Render model builds expected cells", TestRenderModelCellCount, failures);
         Run("Render model normalizes tolerance text", TestRenderModelNormalizesValue, failures);
+        Run("Render model parses inline tolerance tokens", TestRenderModelParsesInlineTokens, failures);
+        Run("Render model keeps spherical radius as SR text", TestRenderModelUsesSrText, failures);
         Run("Render model includes top and bottom text", TestRenderModelIncludesContextText, failures);
         Run("Render model carries content color", TestRenderModelCarriesContentColor, failures);
         Run("Settings serialize cleanly", TestSettingsSerialization, failures);
@@ -62,6 +65,19 @@ internal static class Program
         AssertFalse(result.IsValid, "Position without datums should be invalid.");
     }
 
+    private static void TestValidationAcceptsInlineTokens()
+    {
+        var service = new ValidationService();
+        var result = service.Validate(new GeometricToleranceSpec
+        {
+            Characteristic = GeometricCharacteristic.Position,
+            ToleranceValue = "0.2 CZ UZ -0.2",
+            DatumReferences = [new DatumReference { Label = "A" }]
+        });
+
+        AssertTrue(result.IsValid, "Inline CZ and UZ tokens should still validate from the leading tolerance value.");
+    }
+
     private static void TestRenderModelCellCount()
     {
         var renderer = new ToleranceRenderService();
@@ -91,7 +107,41 @@ internal static class Program
         });
 
         var toleranceCellText = string.Concat(model.Cells[1].Tokens.Where(token => !token.IsSymbol).Select(token => token.Text));
-        AssertEqual("0.25", toleranceCellText, "Tolerance text should normalize to invariant format.");
+        AssertEqual("0.250", toleranceCellText, "Tolerance text should normalize decimal separators while keeping the leading zero and entered precision.");
+    }
+
+    private static void TestRenderModelParsesInlineTokens()
+    {
+        var renderer = new ToleranceRenderService();
+        var model = renderer.Render(new GeometricToleranceSpec
+        {
+            Characteristic = GeometricCharacteristic.Position,
+            ToleranceValue = "0.2CZ UZ -0.2",
+            ZoneModifier = ToleranceZoneModifier.None,
+            DatumReferences = [new DatumReference { Label = "A" }]
+        });
+
+        var toleranceTokens = model.Cells[1].Tokens.Where(token => !token.IsSymbol).Select(token => token.Text).ToArray();
+        AssertEqual(4, toleranceTokens.Length, "Inline tolerance entry should split into four text tokens.");
+        AssertEqual("0.2", toleranceTokens[0]!, "The leading tolerance value should stay first.");
+        AssertEqual("CZ", toleranceTokens[1]!, "The common-zone token should be preserved.");
+        AssertEqual("UZ", toleranceTokens[2]!, "The UZ token should be preserved.");
+        AssertEqual("-0.2", toleranceTokens[3]!, "The unequal-disposition value should be preserved.");
+    }
+
+    private static void TestRenderModelUsesSrText()
+    {
+        var renderer = new ToleranceRenderService();
+        var model = renderer.Render(new GeometricToleranceSpec
+        {
+            Characteristic = GeometricCharacteristic.Position,
+            ToleranceValue = "0.2",
+            ZoneModifier = ToleranceZoneModifier.SphericalRadius,
+            DatumReferences = [new DatumReference { Label = "A" }]
+        });
+
+        AssertEqual("SR", model.Cells[1].Tokens[0].Text!, "Spherical radius should render as SR text.");
+        AssertFalse(model.Cells[1].Tokens[0].IsSymbol, "Spherical radius should not render with a diameter symbol.");
     }
 
     private static void TestRenderModelIncludesContextText()

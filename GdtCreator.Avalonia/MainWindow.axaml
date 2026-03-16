@@ -1,0 +1,263 @@
+<Window
+    x:Class="GdtCreator.Avalonia.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:GdtCreator.Avalonia.Controls"
+    Title="GDT Creator"
+    Width="1460"
+    Height="920"
+    MinWidth="1240"
+    MinHeight="780">
+  <Window.Styles>
+    <Style Selector="ListBox.clean">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+      <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+    </Style>
+
+    <Style Selector="ListBox.clean ListBoxItem">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Margin" Value="0,0,10,10" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+
+    <Style Selector="Border.choice-card">
+      <Setter Property="Background" Value="#F7FAFD" />
+      <Setter Property="BorderBrush" Value="#D5E2EC" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="16" />
+      <Setter Property="Padding" Value="12" />
+    </Style>
+
+    <Style Selector="Border.choice-chip">
+      <Setter Property="Background" Value="#F8FBFD" />
+      <Setter Property="BorderBrush" Value="#D5E2EC" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="12" />
+      <Setter Property="Padding" Value="12,8" />
+    </Style>
+
+    <Style Selector="ListBox.clean ListBoxItem:selected Border.choice-card">
+      <Setter Property="Background" Value="#DCECF6" />
+      <Setter Property="BorderBrush" Value="#175676" />
+      <Setter Property="BorderThickness" Value="2" />
+    </Style>
+
+    <Style Selector="ListBox.clean ListBoxItem:selected Border.choice-chip">
+      <Setter Property="Background" Value="#DCECF6" />
+      <Setter Property="BorderBrush" Value="#175676" />
+      <Setter Property="BorderThickness" Value="2" />
+    </Style>
+  </Window.Styles>
+
+  <Window.Resources>
+    <DataTemplate x:Key="CharacteristicTemplate">
+      <Border Classes="choice-card" Width="156" Height="88">
+        <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+          <Border Width="46" Height="46" Background="#EFF5F9" CornerRadius="12">
+            <controls:SymbolSwatchControl Width="40" Height="40" StrokeThickness="2.1" Symbol="{Binding Symbol}" IsVisible="{Binding HasSymbol}" />
+          </Border>
+          <StackPanel Spacing="2" VerticalAlignment="Center">
+            <TextBlock FontSize="13" FontWeight="SemiBold" Foreground="#102A43" Text="{Binding DisplayLabel}" TextWrapping="Wrap" />
+            <TextBlock Classes="muted" Text="{Binding Category}" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ChipTemplate">
+      <Border Classes="choice-chip">
+        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+          <Border Width="24" Height="24" Background="#EFF5F9" CornerRadius="8" IsVisible="{Binding HasSymbol}">
+            <controls:SymbolSwatchControl Width="20" Height="20" StrokeThickness="1.7" Symbol="{Binding Symbol}" />
+          </Border>
+          <TextBlock VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="#102A43" Text="{Binding DisplayLabel}" />
+        </StackPanel>
+      </Border>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ColorPresetTemplate">
+      <Border Classes="choice-chip" MinWidth="116">
+        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+          <Border Width="18" Height="18" CornerRadius="9" Background="{Binding SwatchHex}" BorderBrush="#D5E2EC" BorderThickness="1" />
+          <TextBlock VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="#102A43" Text="{Binding Label}" />
+        </StackPanel>
+      </Border>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatumConditionTemplate">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Border Width="24" Height="24" Background="#EFF5F9" CornerRadius="8" IsVisible="{Binding HasSymbol}">
+          <controls:SymbolSwatchControl Width="20" Height="20" StrokeThickness="1.7" Symbol="{Binding Symbol}" />
+        </Border>
+        <TextBlock VerticalAlignment="Center" Text="{Binding DisplayLabel}" />
+      </StackPanel>
+    </DataTemplate>
+  </Window.Resources>
+
+  <Grid Margin="18" RowDefinitions="Auto,*" ColumnDefinitions="*,400">
+    <Border Grid.Row="0" Grid.ColumnSpan="2" Classes="card" Padding="18,16" Margin="0,0,0,16">
+      <Grid ColumnDefinitions="*,Auto">
+        <StackPanel Spacing="4">
+          <TextBlock FontSize="26" FontWeight="SemiBold" Foreground="#102A43" Text="GDT Creator" />
+          <TextBlock Foreground="#5B6674" Text="Tolerance editor rebuilt in Avalonia with denser controls and direct symbol selection." />
+        </StackPanel>
+
+        <Border Grid.Column="1" Background="#D9ECF5" CornerRadius="10" Padding="10,6" VerticalAlignment="Center">
+          <TextBlock Foreground="#175676" FontWeight="SemiBold" Text="ISO GPS" />
+        </Border>
+      </Grid>
+    </Border>
+
+    <ScrollViewer Grid.Row="1" Grid.Column="0" Margin="0,0,16,0" HorizontalScrollBarVisibility="Disabled">
+      <StackPanel Spacing="16">
+        <Border Classes="card" Padding="18">
+          <StackPanel>
+            <TextBlock Classes="section-title" Text="Characteristic" />
+            <TextBlock Classes="field-label" Text="Choose the tolerance type directly from its symbol." />
+            <ListBox Classes="clean"
+                     ItemsSource="{Binding Characteristics}"
+                     SelectedItem="{Binding SelectedCharacteristic}"
+                     ItemTemplate="{StaticResource CharacteristicTemplate}">
+              <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel />
+                </ItemsPanelTemplate>
+              </ListBox.ItemsPanel>
+            </ListBox>
+          </StackPanel>
+        </Border>
+
+        <Border Classes="card" Padding="18">
+          <StackPanel Spacing="14">
+            <TextBlock Classes="section-title" Text="Tolerance" />
+
+            <Grid ColumnDefinitions="300,*" ColumnSpacing="14">
+              <StackPanel Grid.Column="0" Spacing="6">
+                <TextBlock Classes="field-label" Text="Value" />
+                <TextBox Text="{Binding ToleranceValue}" Watermark="0.2 CZ UZ -0.2" FontSize="18" FontWeight="SemiBold" />
+                <TextBlock Classes="muted" Text="Type CZ and UZ directly in the value field when needed." TextWrapping="Wrap" />
+              </StackPanel>
+
+              <StackPanel Grid.Column="1" Spacing="6">
+                <TextBlock Classes="field-label" Text="Output color" />
+                <ListBox Classes="clean"
+                         ItemsSource="{Binding QuickColorOptions}"
+                         SelectedItem="{Binding SelectedContentColor}"
+                         ItemTemplate="{StaticResource ColorPresetTemplate}">
+                  <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                      <WrapPanel />
+                    </ItemsPanelTemplate>
+                  </ListBox.ItemsPanel>
+                </ListBox>
+              </StackPanel>
+            </Grid>
+
+            <StackPanel>
+              <TextBlock Classes="field-label" Text="Zone modifier" />
+              <ListBox Classes="clean"
+                       ItemsSource="{Binding ZoneModifiers}"
+                       SelectedItem="{Binding SelectedZoneModifier}"
+                       ItemTemplate="{StaticResource ChipTemplate}">
+                <ListBox.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel />
+                  </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+              </ListBox>
+            </StackPanel>
+
+            <StackPanel>
+              <TextBlock Classes="field-label" Text="Material condition" />
+              <ListBox Classes="clean"
+                       ItemsSource="{Binding ToleranceMaterialConditions}"
+                       SelectedItem="{Binding SelectedToleranceMaterialCondition}"
+                       ItemTemplate="{StaticResource ChipTemplate}">
+                <ListBox.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel />
+                  </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+              </ListBox>
+            </StackPanel>
+
+            <WrapPanel Orientation="Horizontal" ItemWidth="220" ItemHeight="34">
+              <CheckBox Content="Projected tolerance zone" IsChecked="{Binding ProjectedToleranceZone}" />
+              <CheckBox Content="Free state" IsChecked="{Binding FreeState}" />
+            </WrapPanel>
+          </StackPanel>
+        </Border>
+
+        <Border Classes="card" Padding="18">
+          <StackPanel Spacing="14">
+            <TextBlock Classes="section-title" Text="Datum Reference System" />
+            <TextBlock Classes="muted" Text="{Binding DatumSectionHint}" TextWrapping="Wrap" />
+
+            <ItemsControl ItemsSource="{Binding DatumSlots}" IsEnabled="{Binding AreDatumInputsEnabled}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Grid ColumnDefinitions="88,80,*" ColumnSpacing="10" Margin="0,0,0,10">
+                    <TextBlock Grid.Column="0" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#5B6674" Text="{Binding Ordinal}" />
+                    <TextBox Grid.Column="1" Text="{Binding Label}" MaxLength="4" HorizontalContentAlignment="Center" FontWeight="SemiBold" />
+                    <ComboBox Grid.Column="2"
+                              ItemsSource="{Binding DataContext.DatumConditionOptions, RelativeSource={RelativeSource AncestorType=Window}}"
+                              SelectedValueBinding="{Binding Value}"
+                              SelectedValue="{Binding MaterialCondition}"
+                              ItemTemplate="{StaticResource DatumConditionTemplate}" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+
+        <Border Classes="card" Padding="16" IsVisible="{Binding HasValidationErrors}">
+          <StackPanel Spacing="6">
+            <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="#B42318" Text="Validation" />
+            <ItemsControl ItemsSource="{Binding ValidationErrors}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Foreground="#B42318" TextWrapping="Wrap" Text="• {Binding}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+
+    <StackPanel Grid.Row="1" Grid.Column="1" Spacing="16">
+      <Border Classes="card" Padding="16">
+        <StackPanel Spacing="10">
+          <TextBlock Classes="section-title" Text="Preview" />
+
+          <CheckBox Content="Text above the frame" IsChecked="{Binding TopTextEnabled}" />
+          <TextBox Text="{Binding TopText}" Watermark="Text above" IsVisible="{Binding TopTextEnabled}" />
+
+          <controls:TolerancePreviewControl Height="280" RenderModel="{Binding RenderModel}" />
+
+          <CheckBox Content="Text below the frame" IsChecked="{Binding BottomTextEnabled}" />
+          <TextBox Text="{Binding BottomText}" Watermark="Text below" IsVisible="{Binding BottomTextEnabled}" />
+
+          <TextBlock Classes="muted" Text="{Binding StatusMessage}" TextWrapping="Wrap" />
+        </StackPanel>
+      </Border>
+
+      <Border Classes="card" Padding="18">
+        <StackPanel Spacing="12">
+          <TextBlock Classes="section-title" Text="Actions" />
+          <TextBlock Classes="muted" Text="Copy the frame or export it without leaving the editor. Exports are fixed at 4x." />
+          <Grid ColumnDefinitions="*,*" ColumnSpacing="12" RowDefinitions="Auto,Auto,Auto" RowSpacing="12">
+            <Button Grid.Row="0" Grid.Column="0" Classes="secondary" Command="{Binding CopyImageCommand}" Content="Copy Image" />
+            <Button Grid.Row="0" Grid.Column="1" Classes="secondary" Command="{Binding CopyVectorCommand}" Content="Copy Vector" />
+            <Button Grid.Row="1" Grid.Column="0" Classes="action" Command="{Binding ExportPngCommand}" Content="Export PNG" />
+            <Button Grid.Row="1" Grid.Column="1" Classes="action" Command="{Binding ExportSvgCommand}" Content="Export SVG" />
+            <Button Grid.Row="2" Grid.ColumnSpan="2" Classes="action" Command="{Binding ExportEmfCommand}" Content="Export EMF" />
+          </Grid>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </Grid>
+</Window>

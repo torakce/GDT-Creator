@@ -1,11 +1,10 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GdtCreator.Core", "GdtCreator.Core\GdtCreator.Core.csproj", "{4B95094D-3FD5-4575-BAB2-367AD80E17A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GdtCreator.Wpf", "GdtCreator.Wpf\GdtCreator.Wpf.csproj", "{9567346C-580C-4FBF-B06A-27A5A533ECE8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GdtCreator.Avalonia", "GdtCreator.Avalonia\GdtCreator.Avalonia.csproj", "{A1E2B18D-0B1D-4DA1-84FD-9DCC2AC0AC5E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GdtCreator.Tests", "GdtCreator.Tests\GdtCreator.Tests.csproj", "{133120B2-2818-43D4-BFFA-B8437B17DFAF}"
 EndProject
@@ -22,10 +21,10 @@ Global
 		{4B95094D-3FD5-4575-BAB2-367AD80E17A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B95094D-3FD5-4575-BAB2-367AD80E17A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B95094D-3FD5-4575-BAB2-367AD80E17A7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9567346C-580C-4FBF-B06A-27A5A533ECE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9567346C-580C-4FBF-B06A-27A5A533ECE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9567346C-580C-4FBF-B06A-27A5A533ECE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9567346C-580C-4FBF-B06A-27A5A533ECE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1E2B18D-0B1D-4DA1-84FD-9DCC2AC0AC5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1E2B18D-0B1D-4DA1-84FD-9DCC2AC0AC5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1E2B18D-0B1D-4DA1-84FD-9DCC2AC0AC5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1E2B18D-0B1D-4DA1-84FD-9DCC2AC0AC5E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{133120B2-2818-43D4-BFFA-B8437B17DFAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{133120B2-2818-43D4-BFFA-B8437B17DFAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{133120B2-2818-43D4-BFFA-B8437B17DFAF}.Release|Any CPU.ActiveCfg = Release|Any CPU

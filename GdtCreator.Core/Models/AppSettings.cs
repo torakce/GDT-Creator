@@ -4,5 +4,6 @@ public sealed class AppSettings
 {
     public GeometricToleranceSpec LastSpec { get; set; } = GeometricToleranceSpec.CreateDefault();
 
-    public double ExportScale { get; set; } = 2.0d;
+    public double ExportScale { get; set; } = 4.0d;
 }
+

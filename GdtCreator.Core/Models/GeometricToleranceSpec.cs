@@ -24,7 +24,7 @@ public sealed class GeometricToleranceSpec
 
     public string? BottomText { get; set; }
 
-    public string ContentColorHex { get; set; } = "#102A43";
+    public string ContentColorHex { get; set; } = "#000000";
 
     public List<DatumReference> DatumReferences { get; set; } =
     [
@@ -40,3 +40,4 @@ public sealed class GeometricToleranceSpec
         return new GeometricToleranceSpec();
     }
 }
+

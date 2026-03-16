@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text.RegularExpressions;
 using GdtCreator.Core.Enums;
 using GdtCreator.Core.Models;
 
@@ -6,11 +7,11 @@ namespace GdtCreator.Core.Rendering;
 
 public sealed class ToleranceRenderService : IRenderService
 {
-    private const double FrameHeight = 46d;
-    private const double BasePadding = 12d;
-    private const double TextLineHeight = 18d;
-    private const double TextGap = 6d;
-    private const string DefaultContentColorHex = "#102A43";
+    private static readonly Regex InlineTokenPattern = new(@"UZ|CZ|[+-]?(?:\d+(?:[\.,]\d+)?|[\.,]\d+)|[A-Za-z]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private const double FrameHeight = RenderMetrics.CellHeight;
+    private const double TextLineHeight = 24d;
+    private const double TextGap = 8d;
+    private const string DefaultContentColorHex = "#000000";
 
     public ToleranceRenderModel Render(GeometricToleranceSpec spec)
     {
@@ -63,7 +64,8 @@ public sealed class ToleranceRenderService : IRenderService
             BottomText = bottomText,
             TopTextHeight = topTextHeight,
             BottomTextHeight = bottomTextHeight,
-            TextGap = TextGap
+            TextGap = TextGap,
+            StrokeThickness = RenderMetrics.StrokeThickness
         };
     }
 
@@ -106,7 +108,7 @@ public sealed class ToleranceRenderService : IRenderService
     {
         return string.IsNullOrWhiteSpace(text)
             ? 0d
-            : Math.Max(60d, text.Trim().Length * 9d);
+            : Math.Max(90d, text.Trim().Length * 13d);
     }
 
     private static bool HasDatumReference(DatumReference datumReference)
@@ -128,10 +130,10 @@ public sealed class ToleranceRenderService : IRenderService
         }
         else if (spec.ZoneModifier == ToleranceZoneModifier.SphericalRadius)
         {
-            tokens.Add(RenderToken.ForSymbol(RenderSymbol.SphericalRadius));
+            tokens.Add(RenderToken.ForText("SR"));
         }
 
-        tokens.Add(RenderToken.ForText(NormalizeToleranceValue(spec.ToleranceValue)));
+        tokens.AddRange(ParseInlineToleranceTokens(spec.ToleranceValue));
 
         if (spec.ToleranceMaterialCondition == ToleranceMaterialCondition.MaximumMaterialCondition)
         {
@@ -152,15 +154,40 @@ public sealed class ToleranceRenderService : IRenderService
             tokens.Add(RenderToken.ForSymbol(RenderSymbol.FreeState));
         }
 
-        if (!string.IsNullOrWhiteSpace(spec.UnequallyDisposedValue))
+        return tokens;
+    }
+
+    private static IReadOnlyList<RenderToken> ParseInlineToleranceTokens(string toleranceValue)
+    {
+        var trimmed = toleranceValue.Trim();
+        if (string.IsNullOrWhiteSpace(trimmed))
         {
-            tokens.Add(RenderToken.ForText("UZ"));
-            tokens.Add(RenderToken.ForText(NormalizeToleranceValue(spec.UnequallyDisposedValue)));
+            return [];
         }
 
-        if (spec.CombinedZone)
+        var matches = InlineTokenPattern.Matches(trimmed);
+        if (matches.Count == 0)
         {
-            tokens.Add(RenderToken.ForText("CZ"));
+            return [RenderToken.ForText(NormalizeToleranceValue(trimmed))];
+        }
+
+        var tokens = new List<RenderToken>(matches.Count);
+        foreach (Match match in matches)
+        {
+            var token = match.Value.Trim();
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                continue;
+            }
+
+            if (TryParseToleranceValue(token, out _))
+            {
+                tokens.Add(RenderToken.ForText(NormalizeToleranceValue(token)));
+            }
+            else
+            {
+                tokens.Add(RenderToken.ForText(token.ToUpperInvariant()));
+            }
         }
 
         return tokens;
@@ -168,12 +195,27 @@ public sealed class ToleranceRenderService : IRenderService
 
     private static string NormalizeToleranceValue(string toleranceValue)
     {
-        return TryParseToleranceValue(toleranceValue, out var value)
-            ? value.ToString("0.###", CultureInfo.InvariantCulture)
-            : toleranceValue.Trim();
+        var trimmed = toleranceValue.Trim();
+        if (!TryParseToleranceValue(trimmed, out _))
+        {
+            return trimmed.ToUpperInvariant();
+        }
+
+        var normalized = trimmed.Replace(',', '.');
+        if (normalized.StartsWith(".", StringComparison.Ordinal))
+        {
+            return $"0{normalized}";
+        }
+
+        if (normalized.StartsWith("-.", StringComparison.Ordinal))
+        {
+            return $"-0{normalized[1..]}";
+        }
+
+        return normalized;
     }
 
-    private static bool TryParseToleranceValue(string toleranceValue, out decimal value)
+    internal static bool TryParseToleranceValue(string toleranceValue, out decimal value)
     {
         var trimmed = toleranceValue.Trim();
         var styles = NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign;
@@ -198,25 +240,12 @@ public sealed class ToleranceRenderService : IRenderService
 
     private static ToleranceCell CreateCell(IReadOnlyList<RenderToken> tokens)
     {
+        var preferSquare = tokens.Count == 1 && tokens[0].IsSymbol;
         return new ToleranceCell
         {
             Tokens = tokens,
-            Width = EstimateCellWidth(tokens)
+            Width = RenderMetrics.MeasureCellWidth(tokens, preferSquare)
         };
-    }
-
-    private static double EstimateCellWidth(IEnumerable<RenderToken> tokens)
-    {
-        var width = BasePadding * 2d;
-
-        foreach (var token in tokens)
-        {
-            width += token.IsSymbol
-                ? 38d
-                : Math.Max(18d, token.Text!.Length * 10d);
-        }
-
-        return Math.Max(68d, width);
     }
 
     private static RenderSymbol ToCharacteristicSymbol(GeometricCharacteristic characteristic)

@@ -1,14 +1,14 @@
-namespace GdtCreator.Core.Rendering;
+﻿namespace GdtCreator.Core.Rendering;
 
 public static class RenderMetrics
 {
-    public const double CellHeight = 32d;
-    public const double CharacteristicCellWidth = 32d;
-    public const double MinimumCellWidth = 32d;
-    public const double HorizontalPadding = 6d;
-    public const double TokenGap = 4d;
-    public const double StrokeThickness = 1.4d;
-    public const double TextFontSize = 15d;
+    public const double CellHeight = 54d;
+    public const double CharacteristicCellWidth = 58d;
+    public const double MinimumCellWidth = 62d;
+    public const double HorizontalPadding = 10d;
+    public const double TokenGap = 6d;
+    public const double StrokeThickness = 1.8d;
+    public const double TextFontSize = 26d;
 
     public static double MeasureTokenAdvance(RenderToken token)
     {
@@ -18,10 +18,11 @@ public static class RenderMetrics
         {
             return token.Symbol switch
             {
-                RenderSymbol.SphericalDiameter => 28d,
-                RenderSymbol.SphericalRadius => 32d,
-                RenderSymbol.MaximumMaterialCondition or RenderSymbol.LeastMaterialCondition or RenderSymbol.ProjectedToleranceZone or RenderSymbol.FreeState => 22d,
-                _ => 20d
+                RenderSymbol.SphericalDiameter => 46d,
+                RenderSymbol.SphericalRadius => 52d,
+                RenderSymbol.MaximumMaterialCondition or RenderSymbol.LeastMaterialCondition or RenderSymbol.ProjectedToleranceZone or RenderSymbol.FreeState => 34d,
+                RenderSymbol.Diameter => 30d,
+                _ => 28d
             };
         }
 
@@ -31,8 +32,8 @@ public static class RenderMetrics
             return TextFontSize * 0.8d;
         }
 
-        var widthFactor = text.All(char.IsLetter) ? 0.62d : 0.58d;
-        return Math.Max(TextFontSize * 0.85d, text.Length * TextFontSize * widthFactor);
+        var widthFactor = text.All(char.IsLetter) ? 0.56d : 0.52d;
+        return Math.Max(TextFontSize * 0.78d, text.Length * TextFontSize * widthFactor);
     }
 
     public static double MeasureTokenSequenceWidth(IReadOnlyList<RenderToken> tokens)
