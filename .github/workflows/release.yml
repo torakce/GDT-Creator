@@ -26,7 +26,7 @@ jobs:
 
       - name: Restore win-x64 publish dependencies
         run: >-
-          dotnet restore GdtCreator.Wpf/GdtCreator.Wpf.csproj
+          dotnet restore GdtCreator.Avalonia/GdtCreator.Avalonia.csproj
           -r win-x64
           /p:SelfContained=true
           --configfile NuGet.Config
@@ -37,7 +37,7 @@ jobs:
       - name: Publish portable single-file build
         shell: pwsh
         run: |
-          dotnet publish GdtCreator.Wpf/GdtCreator.Wpf.csproj `
+          dotnet publish GdtCreator.Avalonia/GdtCreator.Avalonia.csproj `
             -c Release `
             -r win-x64 `
             /p:SelfContained=true `
@@ -65,9 +65,9 @@ jobs:
           }
           New-Item -ItemType Directory -Force -Path $releaseDir | Out-Null
 
-          $publishedExe = Get-ChildItem "artifacts/publish/win-x64" -Filter "*.exe" | Select-Object -First 1 -ExpandProperty FullName
-          if (-not $publishedExe) {
-            throw "Published executable not found."
+          $publishedExe = Join-Path "artifacts/publish/win-x64" "GdtCreator.Avalonia.exe"
+          if (-not (Test-Path $publishedExe)) {
+            throw "Published Avalonia executable not found."
           }
 
           Copy-Item $publishedExe $portableExe -Force
@@ -92,4 +92,3 @@ jobs:
           else {
             gh release create $tag $exe $zip --title "GDT Creator $tag" --generate-notes
           }
-
