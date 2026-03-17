@@ -1,4 +1,4 @@
-﻿<Application
+<Application
     x:Class="GdtCreator.Avalonia.App"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -21,21 +21,21 @@
     </Style>
 
     <Style Selector="TextBlock.field-label">
-      <Setter Property="FontSize" Value="12" />
-      <Setter Property="Foreground" Value="#5B6674" />
+      <Setter Property="FontSize" Value="12.5" />
+      <Setter Property="Foreground" Value="#48606B" />
       <Setter Property="Margin" Value="0,0,0,6" />
     </Style>
 
     <Style Selector="TextBlock.muted">
       <Setter Property="FontSize" Value="12.5" />
-      <Setter Property="Foreground" Value="#5B6674" />
+      <Setter Property="Foreground" Value="#52606D" />
     </Style>
 
     <Style Selector="Border.card">
       <Setter Property="Background" Value="#FCFEFF" />
       <Setter Property="BorderBrush" Value="#CAD7E4" />
       <Setter Property="BorderThickness" Value="1" />
-      <Setter Property="CornerRadius" Value="20" />
+      <Setter Property="CornerRadius" Value="18" />
     </Style>
 
     <Style Selector="Button.action">
@@ -46,12 +46,30 @@
       <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 
+    <Style Selector="Button.action:pointerover">
+      <Setter Property="Background" Value="#0F4C68" />
+    </Style>
+
+    <Style Selector="Button.action:disabled">
+      <Setter Property="Background" Value="#AFC6D4" />
+      <Setter Property="Foreground" Value="#F8FBFD" />
+    </Style>
+
     <Style Selector="Button.secondary">
       <Setter Property="Background" Value="#E6F1F7" />
       <Setter Property="Foreground" Value="#175676" />
       <Setter Property="Padding" Value="14,9" />
       <Setter Property="CornerRadius" Value="12" />
       <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <Style Selector="Button.secondary:pointerover">
+      <Setter Property="Background" Value="#D7E9F3" />
+    </Style>
+
+    <Style Selector="Button.secondary:disabled">
+      <Setter Property="Background" Value="#EEF4F8" />
+      <Setter Property="Foreground" Value="#8AA0AD" />
     </Style>
   </Application.Styles>
 </Application>

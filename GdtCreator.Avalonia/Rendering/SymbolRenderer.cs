@@ -335,7 +335,7 @@ public static class SymbolRenderer
                 context.DrawEllipse(null, pen, Center(bounds), bounds.Width * 0.28, bounds.Height * 0.28);
                 break;
             case RenderSymbol.Cylindricity:
-                DrawAvaloniaCylindricity(context, pen, bounds);
+                DrawGlyphSymbol(context, bounds, brush, "\u232D", SymbolTypeface, 0.92d);
                 break;
             case RenderSymbol.ProfileOfALine:
                 context.DrawGeometry(null, pen, CreateBezierGeometry(bounds, 0.18, 0.65, 0.32, 0.2, 0.68, 0.2, 0.82, 0.65));
@@ -365,15 +365,13 @@ public static class SymbolRenderer
                 context.DrawEllipse(null, pen, Center(bounds), bounds.Width * 0.13, bounds.Height * 0.13);
                 break;
             case RenderSymbol.Symmetry:
-                context.DrawLine(pen, PointAt(bounds, 0.20, 0.26), PointAt(bounds, 0.80, 0.26));
-                context.DrawLine(pen, PointAt(bounds, 0.20, 0.50), PointAt(bounds, 0.80, 0.50));
-                context.DrawLine(pen, PointAt(bounds, 0.20, 0.74), PointAt(bounds, 0.80, 0.74));
+                DrawGlyphSymbol(context, bounds, brush, "\u232F", SymbolTypeface, 0.92d);
                 break;
             case RenderSymbol.CircularRunout:
-                DrawAvaloniaRunout(context, pen, bounds, false);
+                DrawGlyphSymbol(context, bounds, brush, "\u2197", SymbolTypeface, 0.92d);
                 break;
             case RenderSymbol.TotalRunout:
-                DrawAvaloniaRunout(context, pen, bounds, true);
+                DrawGlyphSymbol(context, bounds, brush, "\u2330", SymbolTypeface, 0.92d);
                 break;
             case RenderSymbol.Diameter:
                 context.DrawEllipse(null, pen, Center(bounds), bounds.Width * 0.28, bounds.Height * 0.28);
@@ -414,7 +412,7 @@ public static class SymbolRenderer
                 AppendSvgEllipse(builder, Center(bounds), bounds.Width * 0.28, bounds.Height * 0.28, color, strokeWidth);
                 break;
             case RenderSymbol.Cylindricity:
-                AppendSvgCylindricity(builder, bounds, color, strokeWidth);
+                AppendSvgGlyph(builder, bounds, color, "\u232D", 0.92d);
                 break;
             case RenderSymbol.ProfileOfALine:
                 builder.AppendLine($"  <path d=\"M {SvgPoint(bounds, 0.18, 0.65)} C {SvgPoint(bounds, 0.32, 0.2)} {SvgPoint(bounds, 0.68, 0.2)} {SvgPoint(bounds, 0.82, 0.65)}\" fill=\"none\" stroke=\"{color}\" stroke-width=\"{Format(strokeWidth)}\" stroke-linecap=\"round\" />");
@@ -444,15 +442,13 @@ public static class SymbolRenderer
                 AppendSvgEllipse(builder, Center(bounds), bounds.Width * 0.13, bounds.Height * 0.13, color, strokeWidth);
                 break;
             case RenderSymbol.Symmetry:
-                AppendSvgLine(builder, PointAt(bounds, 0.20, 0.26), PointAt(bounds, 0.80, 0.26), color, strokeWidth);
-                AppendSvgLine(builder, PointAt(bounds, 0.20, 0.50), PointAt(bounds, 0.80, 0.50), color, strokeWidth);
-                AppendSvgLine(builder, PointAt(bounds, 0.20, 0.74), PointAt(bounds, 0.80, 0.74), color, strokeWidth);
+                AppendSvgGlyph(builder, bounds, color, "\u232F", 0.92d);
                 break;
             case RenderSymbol.CircularRunout:
-                AppendSvgRunout(builder, bounds, color, strokeWidth, false);
+                AppendSvgGlyph(builder, bounds, color, "\u2197", 0.92d);
                 break;
             case RenderSymbol.TotalRunout:
-                AppendSvgRunout(builder, bounds, color, strokeWidth, true);
+                AppendSvgGlyph(builder, bounds, color, "\u2330", 0.92d);
                 break;
             case RenderSymbol.Diameter:
                 AppendSvgEllipse(builder, Center(bounds), bounds.Width * 0.28, bounds.Height * 0.28, color, strokeWidth);
@@ -808,7 +804,7 @@ public static class SymbolRenderer
                 graphics.DrawEllipse(pen, bounds.Left + (bounds.Width * 0.22f), bounds.Top + (bounds.Height * 0.22f), bounds.Width * 0.56f, bounds.Height * 0.56f);
                 break;
             case RenderSymbol.Cylindricity:
-                DrawGdiCylindricity(graphics, pen, bounds);
+                DrawGdiGlyph(graphics, bounds, brush, "\u232D");
                 break;
             case RenderSymbol.ProfileOfALine:
                 graphics.DrawBezier(pen, PointAt(bounds, 0.18f, 0.65f), PointAt(bounds, 0.32f, 0.2f), PointAt(bounds, 0.68f, 0.2f), PointAt(bounds, 0.82f, 0.65f));
@@ -839,15 +835,13 @@ public static class SymbolRenderer
                 graphics.DrawEllipse(pen, bounds.Left + (bounds.Width * 0.37f), bounds.Top + (bounds.Height * 0.37f), bounds.Width * 0.26f, bounds.Height * 0.26f);
                 break;
             case RenderSymbol.Symmetry:
-                graphics.DrawLine(pen, PointAt(bounds, 0.20f, 0.26f), PointAt(bounds, 0.80f, 0.26f));
-                graphics.DrawLine(pen, PointAt(bounds, 0.20f, 0.50f), PointAt(bounds, 0.80f, 0.50f));
-                graphics.DrawLine(pen, PointAt(bounds, 0.20f, 0.74f), PointAt(bounds, 0.80f, 0.74f));
+                DrawGdiGlyph(graphics, bounds, brush, "\u232F");
                 break;
             case RenderSymbol.CircularRunout:
-                DrawGdiRunout(graphics, pen, bounds, false);
+                DrawGdiGlyph(graphics, bounds, brush, "\u2197");
                 break;
             case RenderSymbol.TotalRunout:
-                DrawGdiRunout(graphics, pen, bounds, true);
+                DrawGdiGlyph(graphics, bounds, brush, "\u2330");
                 break;
             case RenderSymbol.Diameter:
                 graphics.DrawEllipse(pen, bounds.Left + (bounds.Width * 0.22f), bounds.Top + (bounds.Height * 0.22f), bounds.Width * 0.56f, bounds.Height * 0.56f);

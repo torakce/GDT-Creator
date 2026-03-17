@@ -77,8 +77,8 @@ public sealed class MainWindowViewModel : ViewModelBase
         ZoneModifiers = new ObservableCollection<OptionItem<ToleranceZoneModifier>>
         {
             new() { Label = "No modifier", ShortLabel = "None", Value = ToleranceZoneModifier.None },
-            new() { Label = "Diameter", ShortLabel = "Ø", Value = ToleranceZoneModifier.Diameter, Symbol = RenderSymbol.Diameter },
-            new() { Label = "Spherical diameter", ShortLabel = "SØ", Value = ToleranceZoneModifier.SphericalDiameter, Symbol = RenderSymbol.SphericalDiameter },
+            new() { Label = "Diameter", ShortLabel = "\u00D8", Value = ToleranceZoneModifier.Diameter, Symbol = RenderSymbol.Diameter },
+            new() { Label = "Spherical diameter", ShortLabel = "S\u00D8", Value = ToleranceZoneModifier.SphericalDiameter, Symbol = RenderSymbol.SphericalDiameter },
             new() { Label = "Spherical radius", ShortLabel = "SR", Value = ToleranceZoneModifier.SphericalRadius }
         };
 
@@ -347,6 +347,8 @@ public sealed class MainWindowViewModel : ViewModelBase
         private set => SetProperty(ref _hasValidationErrors, value);
     }
 
+    public bool IsSpecValid => !HasValidationErrors;
+
     public void SaveSettings()
     {
         _settingsService.Save(new AppSettings
@@ -404,9 +406,10 @@ public sealed class MainWindowViewModel : ViewModelBase
         }
 
         HasValidationErrors = ValidationErrors.Count > 0;
+        RaisePropertyChanged(nameof(IsSpecValid));
         StatusMessage = validation.IsValid
             ? "Ready to copy or export."
-            : validation.Errors.First();
+            : "Fix the validation errors before copying or exporting.";
 
         RaisePropertyChanged(nameof(ValidationErrors));
         NotifyCommands();
@@ -510,7 +513,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     private bool CanExportOrCopy()
     {
-        return RenderModel is not null;
+        return RenderModel is not null && !HasValidationErrors;
     }
 
     private async Task ExecuteCopyImageAsync()
